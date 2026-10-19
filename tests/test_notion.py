@@ -141,6 +141,44 @@ def test_current_state_unifies_test_sources_without_promoting_claims(cfg, with_l
         assert legacy["event_id"] in content
 
 
+@pytest.mark.parametrize("reverse", [False, True])
+def test_current_state_cross_author_revision_keeps_history(cfg, reverse):
+    from fip_helpers import event as external_event
+    from fip_helpers import grant, revision, test_result
+
+    from chronicle.memory_service import MemoryService
+    from chronicle.state import build_state, render_state
+
+    memory = MemoryService(Agent(cfg).store)
+    source = external_event()
+    memory.execute("append_event", {"record": source, "idempotency_key": "source"}, grant())
+    passed = test_result(source["record_id"])
+    memory.execute("register_test_result", {"record": passed, "idempotency_key": "a"}, grant())
+    failed = dict(
+        revision(passed, "agent-b"),
+        status="Failed",
+        exit_code=1,
+        summary="Повторная проверка завершилась с ошибкой",
+    )
+    reviser = grant("agent-b", "agent-b", scopes=["read", "write", "revise"])
+    memory.execute("register_test_result", {"record": failed, "idempotency_key": "b"}, reviser)
+    records = [r["body"] for r in memory.ledger.rows() if r["kind"] == "TestResult"]
+    assert records == [passed, failed]
+    context = memory.execute("get_project_state", {"project_id": "game-one"}, reviser)["data"]
+    content = render_state(build_state([]), context, records[::-1] if reverse else records)
+    assert "Тесты: agent_reported: Failed — 1" in content
+    assert "Failed [agent_reported; FIP]" in content
+    assert "Passed" not in content
+    assert passed["record_id"] not in content
+    assert failed["record_id"] in content
+    history = memory.execute("get_test_results", {"project_id": "game-one"}, reviser)["data"]
+    assert {r["record_id"] for r in history["items"]} == {passed["record_id"], failed["record_id"]}
+    assert {r["record_id"]: (r["agent_id"], r["provenance"]) for r in history["items"]} == {
+        passed["record_id"]: ("agent-a", "agent_reported"),
+        failed["record_id"]: ("agent-b", "agent_reported"),
+    }
+
+
 def test_fip_projection_requires_opt_in_and_preserves_stable_state(cfg):
     from fip_helpers import event as external_event
     from fip_helpers import grant

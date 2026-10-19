@@ -157,6 +157,12 @@ def build_state(events, stale_seconds=1800, clock=None):
     }
 
 
+def latest_test_results(tests):
+    return {
+        (t["project_id"], t["test_id"]): t for t in sorted(tests, key=lambda t: t["revision"])
+    }.values()
+
+
 def render_state(state, fip_context=None, fip_tests=()):
     r = state["latest_report"]
     context = fip_context or {}
@@ -174,8 +180,7 @@ def render_state(state, fip_context=None, fip_tests=()):
         for t in state["tool_results"]
         if t["test_runner"]
     ]
-    latest = {(t.get("agent_id"), t["test_id"]): t for t in fip_tests}
-    tests += [dict(t, source=t["record_id"], channel="FIP") for t in latest.values()]
+    tests += [dict(t, source=t["record_id"], channel="FIP") for t in latest_test_results(fip_tests)]
     counts = Counter((t["provenance"], t["status"]) for t in tests)
     test_summary = (
         "; ".join(
