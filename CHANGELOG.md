@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — integration completion
+
+- Expanded REST/MCP to 18 operations: recent activity, daily summaries, independent test and knowledge registration. Existing FIP v1 shapes remain compatible.
+- Reused the existing Notion Observatory root, added dedicated-token file setup/read preflight, and prevented live tests from archiving the user root.
+- Added private loopback Docker Compose, strict body type checking, dependency audit CI and real-clock soak/live integration runners.
+- Fixed explicit UTF-8 reads/writes and equal-timestamp lifecycle handling after actual Windows CI failures; increased detached-worker startup allowance.
+- Published preserved Git history in IgorKramar/codex_chronicle using official Git Data API because managed git push authorization is rejected.
+- Stable acceptance remains open: real Codex 401/451, dedicated Notion integration, full Windows/WSL plugin checks and completed 12h soak.
+
 ## 0.2.0 — 2026-10-19, preliminary
 
 - Added FIP v1 contracts, standalone fip-contracts 1.0.0 package, OpenAPI 3.1 and capability discovery.

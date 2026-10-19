@@ -106,8 +106,8 @@ def normalize(raw, cfg):
     unique = raw.get("tool_use_id") if kind in {"PreToolUse", "PostToolUse"} else None
     event_id = str(uuid.uuid4())
     if unique:
-        key = [cfg["computer_id"], session, agent, turn, kind, str(unique)]
-        event_id = str(uuid.uuid5(uuid.NAMESPACE_URL, json.dumps(key)))
+        event_identity = [cfg["computer_id"], session, agent, turn, kind, str(unique)]
+        event_id = str(uuid.uuid5(uuid.NAMESPACE_URL, json.dumps(event_identity)))
     return {
         "schema_version": 1,
         "event_id": event_id,

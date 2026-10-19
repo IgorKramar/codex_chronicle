@@ -136,11 +136,15 @@ def main():
             samples[operation + ".request.json"] = args
             samples[operation + ".response.json"] = service.execute(operation, args, actor)
     for name, value in samples.items():
-        (target / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
+        (target / name).write_text(
+            json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
     packaged = ROOT / "packages/fip-contracts/src/fip_contracts/examples/v1"
     packaged.mkdir(parents=True, exist_ok=True)
     for name, value in samples.items():
-        (packaged / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n")
+        (packaged / name).write_text(
+            json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
     print("Generated schema-validated synthetic FIP requests and real-core responses")
 
 

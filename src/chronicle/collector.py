@@ -2,8 +2,10 @@ import asyncio
 import datetime as dt
 import os
 from contextlib import asynccontextmanager
+from typing import cast
 
 from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi.routing import APIRoute
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -144,7 +146,7 @@ def create_app(location=None, grants=None, publisher_cfg=None):
             raise HTTPException(422, "Invalid safe event schema") from None
 
     # Explicit OpenAPI request model while retaining streamed request-size enforcement.
-    app.routes[-1].openapi_extra = {
+    cast(APIRoute, app.routes[-1]).openapi_extra = {
         "requestBody": {
             "required": True,
             "content": {"application/json": {"schema": EventBatch.model_json_schema()}},

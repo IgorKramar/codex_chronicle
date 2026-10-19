@@ -51,7 +51,7 @@ if __name__ == "__main__":
             from chronicle.memory_service import MemoryService
 
             sample = json.loads(
-                Path("contracts/fip/v1/examples/bootstrap.request.json").read_text()
+                Path("contracts/fip/v1/examples/bootstrap.request.json").read_text(encoding="utf-8")
             )
             actor = {
                 "principal_id": "forge-planner",
@@ -83,7 +83,7 @@ if __name__ == "__main__":
             }
             Path(
                 os.environ.get("CHRONICLE_PROBE_EVIDENCE", "evidence/backup-restore.json")
-            ).write_text(json.dumps(evidence, indent=2) + "\n")
+            ).write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
             print(json.dumps(evidence))
         finally:
             docker("dropdb", "-U", "postgres", source_db)

@@ -6,11 +6,11 @@ import uvicorn
 
 from chronicle.collector import create_app
 
-password = Path("/run/secrets/postgres_password").read_text().strip()
+password = Path("/run/secrets/postgres_password").read_text(encoding="utf-8").strip()
 os.environ["CHRONICLE_DATABASE"] = (
     "postgresql://chronicle:" + quote(password, safe="") + "@postgres/chronicle"
 )
-notion = Path("/run/secrets/notion_token").read_text().strip()
+notion = Path("/run/secrets/notion_token").read_text(encoding="utf-8").strip()
 if notion:
     os.environ["NOTION_TOKEN"] = notion
 uvicorn.run(create_app(), host="0.0.0.0", port=8787, log_config=None, proxy_headers=False)

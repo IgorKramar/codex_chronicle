@@ -71,7 +71,7 @@ def test_grant_rotation_revocation_and_reload_without_restart(tmp_path, monkeypa
     atomic_json(path, [{**old, "revoked": True}, new])
     assert c.get(endpoint, headers={"Authorization": "Bearer old-token"}).status_code == 401
     assert c.get(endpoint, headers={"Authorization": "Bearer new-token"}).status_code == 200
-    path.write_text("broken JSON")
+    path.write_text("broken JSON", encoding="utf-8")
     assert c.get(endpoint, headers={"Authorization": "Bearer new-token"}).status_code == 503
 
 

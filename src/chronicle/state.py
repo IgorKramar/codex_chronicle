@@ -1,5 +1,6 @@
 import datetime as dt
 from collections import Counter, defaultdict
+from typing import Any
 
 from .events import now
 
@@ -10,7 +11,8 @@ def session_key(e):
 
 def build_state(events, stale_seconds=1800, clock=None):
     clock = clock or dt.datetime.now(dt.UTC)
-    sessions, reports, decisions, issues, tests, files = {}, [], [], [], [], set()
+    sessions: dict[str, Any] = {}
+    reports, decisions, issues, tests, files = [], [], [], [], set()
     for e in events:
         key = session_key(e)
         p = e["payload"]
@@ -37,6 +39,11 @@ def build_state(events, stale_seconds=1800, clock=None):
         if (
             e["kind"] not in {"Checkpoint", "MemoryReport", "GitSnapshot"}
             and e["occurred_at"] >= s["last_activity"]
+            and not (
+                e["occurred_at"] == s["last_activity"]
+                and (s["ended_at"] is not None or s["status"] == "Interrupted")
+                and e["kind"] not in {"SessionEnd", "SubagentStop", "Interrupt"}
+            )
         ):
             s["last_activity"] = e["occurred_at"]
             if e["kind"] in {
@@ -95,7 +102,8 @@ def build_state(events, stale_seconds=1800, clock=None):
         if s["status"] == "Running" and age > stale_seconds:
             s["status"] = "Stale"
     # Keep revisions. IDs are scoped by project and explicitly supersede older revisions.
-    current_decisions, current_issues = {}, {}
+    current_decisions: dict[str, Any] = {}
+    current_issues: dict[str, Any] = {}
     for collection, target in [(decisions, current_decisions), (issues, current_issues)]:
         for item in collection:
             identity = item.get("id")

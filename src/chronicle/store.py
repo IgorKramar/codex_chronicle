@@ -4,6 +4,7 @@ import json
 import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any
 
 from .events import fingerprint, now, validate_event
 
@@ -22,6 +23,7 @@ class Store:
 
     @contextmanager
     def connect(self):
+        conn: Any
         if self.postgres:
             import psycopg
             from psycopg.rows import dict_row

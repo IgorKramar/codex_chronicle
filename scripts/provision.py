@@ -35,7 +35,7 @@ if a.expires_at:
     if expiration.tzinfo is None or expiration <= dt.datetime.now(dt.UTC):
         p.error("--expires-at must be an aware future timestamp")
 token = secrets.token_urlsafe(48)
-grants = json.loads(a.auth_file.read_text()) if a.auth_file.exists() else []
+grants = json.loads(a.auth_file.read_text(encoding="utf-8")) if a.auth_file.exists() else []
 grant = {
     "sha256": hashlib.sha256(token.encode()).hexdigest(),
     "scopes": ["read"] if a.read_only else a.scope or (["read", "write"] if a.fip else ["write"]),

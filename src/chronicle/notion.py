@@ -6,6 +6,7 @@ import time
 from collections import defaultdict
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any
 
 from .config import ProcessLock
 from .events import fingerprint
@@ -137,11 +138,15 @@ class Publisher:
         self.store, self.cfg = store, cfg
         self.base = base_url.rstrip("/")
         self.token = token or os.environ.get("NOTION_TOKEN")
-        if not self.token and os.environ.get("NOTION_TOKEN_FILE"):
-            self.token = Path(os.environ["NOTION_TOKEN_FILE"]).read_text().strip()
+        token_file = os.environ.get("NOTION_TOKEN_FILE") or cfg.get("notion_token_file")
+        if not self.token and token_file:
+            secret_path = Path(token_file)
+            if os.name != "nt" and secret_path.stat().st_mode & 0o077:
+                raise RuntimeError("Notion token file must be private (chmod 600)")
+            self.token = secret_path.read_text(encoding="utf-8").strip()
         if not self.token:
             raise RuntimeError("NOTION_TOKEN required; configure locally, never in chat")
-        self.interval, self.last = interval, 0
+        self.interval, self.last = interval, 0.0
         self.sources = store.get_meta("notion:sources", {})
 
     def call(self, method, path, body=None):
@@ -156,7 +161,7 @@ class Publisher:
                 self.base + path,
                 body,
                 {
-                    "Authorization": "Bearer " + self.token,
+                    "Authorization": "Bearer " + str(self.token),
                     "Notion-Version": self.cfg.get("notion_version", "2026-03-11"),
                 },
             )
@@ -256,7 +261,7 @@ class Publisher:
                     raise RuntimeError("Duplicate Chronicle databases")
                 return self.call("GET", "/databases/" + matches[0]["id"]) if matches else None
 
-            schema = {
+            schema: dict[str, Any] = {
                 "Name": {"title": {}},
                 "Chronicle Key": {"rich_text": {}},
                 "Summary": {"rich_text": {}},

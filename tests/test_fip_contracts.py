@@ -37,9 +37,11 @@ def test_all_schemas_and_mcp_inputs_are_valid():
 
 def test_schema_source_package_and_runtime_do_not_drift():
     root = Path(__file__).parents[1]
-    canonical = json.loads((root / "contracts/fip/v1/fip.schema.json").read_text())
+    canonical = json.loads((root / "contracts/fip/v1/fip.schema.json").read_text(encoding="utf-8"))
     packaged = json.loads(
-        (root / "packages/fip-contracts/src/fip_contracts/schemas/v1/fip.schema.json").read_text()
+        (root / "packages/fip-contracts/src/fip_contracts/schemas/v1/fip.schema.json").read_text(
+            encoding="utf-8"
+        )
     )
     assert canonical == BUNDLE == packaged
 
@@ -91,10 +93,15 @@ def test_distributed_examples_validate_against_public_schema():
     }
     for label, operation in mapping.items():
         validate(
-            operation + "Arguments", json.loads((root / (label + ".request.json")).read_text())
+            operation + "Arguments",
+            json.loads((root / (label + ".request.json")).read_text(encoding="utf-8")),
         )
         validate(
-            operation + "Response", json.loads((root / (label + ".response.json")).read_text())
+            operation + "Response",
+            json.loads((root / (label + ".response.json")).read_text(encoding="utf-8")),
         )
     for op in ("get_capabilities", "get_project_state", "search_knowledge"):
-        validate(op + "Response", json.loads((root / (op + ".response.json")).read_text()))
+        validate(
+            op + "Response",
+            json.loads((root / (op + ".response.json")).read_text(encoding="utf-8")),
+        )

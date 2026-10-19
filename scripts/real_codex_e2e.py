@@ -42,7 +42,6 @@ def run_one(base, index):
                 "exec",
                 "--json",
                 "--ephemeral",
-                "--dangerously-bypass-hook-trust",
                 "--sandbox",
                 "workspace-write",
                 "-C",
@@ -94,7 +93,7 @@ def run_one(base, index):
     if health_path.exists():
         import signal
 
-        health = json.loads(health_path.read_text())
+        health = json.loads(health_path.read_text(encoding="utf-8"))
         if health.get("pid"):
             os.kill(health["pid"], signal.SIGTERM)
     return result
@@ -110,6 +109,6 @@ if __name__ == "__main__":
         "note": "Real CLI hooks only; external Notion acceptance is separate.",
     }
     Path("evidence/real-codex.json").write_text(
-        json.dumps(output, indent=2, ensure_ascii=False) + "\n"
+        json.dumps(output, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
     print(json.dumps(output, ensure_ascii=False))

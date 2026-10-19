@@ -5,6 +5,7 @@ import random
 import time
 import uuid
 from pathlib import Path
+from typing import Any
 
 from .config import ProcessLock, atomic_json, load
 from .events import now, validate_event
@@ -118,7 +119,7 @@ class Agent:
 
     def checkpoint(self):
         events = self.store.events()
-        latest = {}
+        latest: dict[tuple[str, str, str], Any] = {}
         for e in events:
             key = (e["computer_id"], e["session_id"], e["agent_id"])
             if e["kind"] not in {"Checkpoint", "MemoryReport", "GitSnapshot"}:
@@ -153,7 +154,7 @@ class Agent:
 
     def run(self, once=False):
         with ProcessLock(self.root / "worker.lock"):
-            next_sync = next_publish = next_checkpoint = next_retention = 0
+            next_sync = next_publish = next_checkpoint = next_retention = 0.0
             while True:
                 self.cfg = load(self.root)
                 try:

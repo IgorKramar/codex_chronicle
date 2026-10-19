@@ -3,6 +3,7 @@ import os
 import tempfile
 import uuid
 from pathlib import Path
+from typing import Any, cast
 
 
 def home() -> Path:
@@ -93,7 +94,7 @@ class ProcessLock:
                 self.f.write(b"0")
                 self.f.flush()
                 self.f.seek(0)
-                msvcrt.locking(self.f.fileno(), msvcrt.LK_NBLCK, 1)
+                cast(Any, msvcrt).locking(self.f.fileno(), cast(Any, msvcrt).LK_NBLCK, 1)
             else:
                 import fcntl
 

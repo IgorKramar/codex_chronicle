@@ -63,6 +63,11 @@ def parser():
     x.add_argument("--notion", action="store_true")
     x = s.add_parser("notion")
     x.add_argument("--parent")
+    x.add_argument(
+        "--set-token",
+        action="store_true",
+        help="Prompt securely on your local terminal and save a private token file",
+    )
     x.add_argument("--root", help="Reuse an existing Observatory page, without creating a root")
     x.add_argument(
         "--check",
@@ -182,7 +187,9 @@ def main(argv=None):
                     "write_token_configured": bool(os.environ.get("CHRONICLE_WRITE_TOKEN")),
                     "notion_token_configured": bool(os.environ.get("NOTION_TOKEN")),
                     "hooks_trust": "Проверьте доверие в Codex; установка не даёт доверия автоматически",
-                    "worker_health": json.loads((home() / "agent-health.json").read_text())
+                    "worker_health": json.loads(
+                        (home() / "agent-health.json").read_text(encoding="utf-8")
+                    )
                     if (home() / "agent-health.json").exists()
                     else None,
                 }
@@ -260,7 +267,7 @@ def main(argv=None):
             agent.store.purge(project_id=a.project, include_pending=a.include_pending)
             # Remove pre-drain envelopes for the project's registered directories too.
             for path in (home() / "spool").glob("*.json"):
-                envelope = json.loads(path.read_text())
+                envelope = json.loads(path.read_text(encoding="utf-8"))
                 if cfg["bindings"].get(envelope["cwd"]) == a.project:
                     path.unlink()
             if a.notion:
@@ -279,6 +286,28 @@ def main(argv=None):
             save(cfg)
             output({"saved": True})
         elif cmd == "notion":
+            if a.set_token:
+                import getpass
+
+                if not sys.stdin.isatty():
+                    raise ValueError("Run --set-token in your local interactive terminal")
+                token = getpass.getpass(
+                    "Dedicated Notion integration token (local terminal only): "
+                ).strip()
+                if not token:
+                    raise ValueError("Empty token")
+                secret_dir = Path(cfg["home"]) / "secrets"
+                secret_dir.mkdir(mode=0o700, exist_ok=True)
+                secret_path = secret_dir / "notion_token"
+                # Refuse silent replacement: use a new path for deliberate rotation.
+                fd = os.open(secret_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+                with os.fdopen(fd, "w") as stream:
+                    stream.write(token)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                cfg["notion_token_file"] = str(secret_path)
+                save(cfg)
+                output({"token_saved": True, "path": str(secret_path), "token": "not displayed"})
             if a.root:
                 cfg["notion_parent"] = a.root
                 cfg["notion_existing_root"] = True

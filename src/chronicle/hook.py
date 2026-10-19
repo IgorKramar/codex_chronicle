@@ -6,6 +6,7 @@ import subprocess
 import sys
 import uuid
 from pathlib import Path
+from typing import Any, cast
 
 from .config import atomic_json, load
 from .events import normalize
@@ -27,7 +28,7 @@ def capture(raw, cfg):
     path = Path(cfg["home"]) / "spool" / (str(uuid.uuid4()) + ".json")
     atomic_json(path, envelope)
     if raw.get("hook_event_name") == "SessionStart" and cfg.get("autostart", True):
-        kwargs = {
+        kwargs: dict[str, Any] = {
             "stdin": subprocess.DEVNULL,
             "stdout": subprocess.DEVNULL,
             "stderr": subprocess.DEVNULL,
@@ -35,7 +36,8 @@ def capture(raw, cfg):
         }
         if os.name == "nt":
             kwargs["creationflags"] = (
-                subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP
+                cast(Any, subprocess).DETACHED_PROCESS
+                | cast(Any, subprocess).CREATE_NEW_PROCESS_GROUP
             )
         else:
             kwargs["start_new_session"] = True

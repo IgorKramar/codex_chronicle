@@ -4,6 +4,7 @@ import asyncio
 import json
 import re
 import uuid
+from typing import Any
 
 from fastapi import Depends, Request
 from fastapi.exceptions import RequestValidationError
@@ -126,7 +127,7 @@ def attach(app, store, auth):
                     "schema": schema,
                 }
             )
-        extra = {
+        extra: dict[str, Any] = {
             "parameters": parameters,
             "responses": {
                 "200": {

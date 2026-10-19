@@ -99,7 +99,9 @@ def main():
             "sqlite_bytes": (root / "load.db").stat().st_size,
             "note": "No real 13h soak; subprocess timing includes interpreter startup. No relative Codex throughput claim.",
         }
-    Path("evidence/load-probe.json").write_text(json.dumps(result, indent=2) + "\n")
+    Path("evidence/load-probe.json").write_text(
+        json.dumps(result, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result))
 
 

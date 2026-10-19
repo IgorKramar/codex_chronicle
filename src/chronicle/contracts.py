@@ -6,7 +6,9 @@ from importlib.resources import files
 from jsonschema import Draft202012Validator, FormatChecker
 from referencing import Registry, Resource
 
-BUNDLE = json.loads(files("chronicle").joinpath("assets/fip/v1/fip.schema.json").read_text())
+BUNDLE = json.loads(
+    files("chronicle").joinpath("assets/fip/v1/fip.schema.json").read_text(encoding="utf-8")
+)
 REGISTRY = Registry().with_resource(BUNDLE["$id"], Resource.from_contents(BUNDLE))
 CATEGORIES = BUNDLE["$defs"]["KnowledgeRecord"]["properties"]["category"]["enum"]
 OPERATIONS = [

@@ -10,7 +10,9 @@ __version__ = "1.0.0"
 
 
 def schema(name=None):
-    bundle = json.loads(files(__package__).joinpath("schemas/v1/fip.schema.json").read_text())
+    bundle = json.loads(
+        files(__package__).joinpath("schemas/v1/fip.schema.json").read_text(encoding="utf-8")
+    )
     return bundle if name is None else bundle["$defs"][name]
 
 

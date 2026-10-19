@@ -9,3 +9,15 @@ __pycache__/
 *.db-*
 dist/
 build/
+
+.mypy_cache/
+.env.*
+!.env.example
+secrets/
+.chronicle/
+*.sqlite*
+*.pem
+*.key
+auth.json
+*.log
+soak-data/

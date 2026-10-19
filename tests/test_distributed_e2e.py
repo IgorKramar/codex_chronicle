@@ -50,7 +50,7 @@ def test_two_computers_offline_restart_collector_notion(tmp_path, monkeypatch, r
         save(cfg)
         for kind in ("SessionStart", "UserPromptSubmit"):
             hook(cfg, cwd, kind, f"s{i}", turn_id="t1", prompt="NEVER_EXPORT_THIS_PROMPT")
-        (cwd / "component.py").write_text("assert 1 + 1 == 2\n")
+        (cwd / "component.py").write_text("assert 1 + 1 == 2\n", encoding="utf-8")
         result = subprocess.run([sys.executable, str(cwd / "component.py")], check=False)
         assert result.returncode == 0
         hook(

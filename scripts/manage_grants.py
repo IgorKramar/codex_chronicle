@@ -10,7 +10,7 @@ p = argparse.ArgumentParser()
 p.add_argument("--auth-file", type=Path, required=True)
 p.add_argument("--revoke-sha256", required=True)
 a = p.parse_args()
-grants = json.loads(a.auth_file.read_text())
+grants = json.loads(a.auth_file.read_text(encoding="utf-8"))
 matched = 0
 for grant in grants:
     if grant["sha256"] == a.revoke_sha256:

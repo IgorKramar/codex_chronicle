@@ -312,7 +312,7 @@ def test_hook_autostarts_worker(cfg, tmp_path):
     assert result.returncode == 0
     health = Path(cfg["home"]) / "agent-health.json"
     try:
-        for _ in range(100):
+        for _ in range(750):
             if health.exists():
                 break
             time.sleep(0.02)
@@ -322,7 +322,7 @@ def test_hook_autostarts_worker(cfg, tmp_path):
         if health.exists():
             import signal
 
-            os.kill(json.loads(health.read_text())["pid"], signal.SIGTERM)
+            os.kill(json.loads(health.read_text(encoding="utf-8"))["pid"], signal.SIGTERM)
 
 
 def test_git_snapshot_tracks_committed_changes(cfg, tmp_path):
@@ -331,7 +331,7 @@ def test_git_snapshot_tracks_committed_changes(cfg, tmp_path):
     cwd = tmp_path / "repo"
     cwd.mkdir()
     subprocess.run(["git", "init", "-q", str(cwd)], check=True)
-    (cwd / "a.py").write_text("first\n")
+    (cwd / "a.py").write_text("first\n", encoding="utf-8")
     subprocess.run(["git", "-C", str(cwd), "add", "."], check=True)
     commit = [
         "git",
@@ -346,8 +346,8 @@ def test_git_snapshot_tracks_committed_changes(cfg, tmp_path):
     ]
     subprocess.run(commit + ["initial"], check=True)
     previous = git(cwd, "rev-parse", "HEAD")
-    (cwd / "a.py").write_text("second\n")
-    (cwd / ".env").write_text("TOKEN=private\n")
+    (cwd / "a.py").write_text("second\n", encoding="utf-8")
+    (cwd / ".env").write_text("TOKEN=private\n", encoding="utf-8")
     subprocess.run(["git", "-C", str(cwd), "add", "a.py"], check=True)
     subprocess.run(commit + ["second"], check=True)
     state = snapshot(cwd, previous)
@@ -365,3 +365,11 @@ def test_issue_closure_requires_explicit_source_reference(cfg, report):
     report["Problems"][0]["resolves"] = [source]
     record(a.store, cfg, "p1", "two", report)
     assert build_state(a.store.events())["issue_states"]["BUG-1"]["status"] == "Resolved"
+
+
+def test_equal_timestamp_does_not_reopen_closed_session(cfg):
+    start, end, late = event(cfg), event(cfg, "SessionEnd"), event(cfg, "Stop")
+    end["occurred_at"] = late["occurred_at"] = start["occurred_at"]
+    state = build_state([start, end, late])
+    assert state["sessions"][0]["status"] == "Unknown"
+    assert state["sessions"][0]["ended_at"] is not None

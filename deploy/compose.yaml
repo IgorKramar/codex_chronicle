@@ -31,6 +31,7 @@ services:
       CHRONICLE_AUTH_FILE: /run/secrets/auth_grants
       CHRONICLE_STATE_DIR: /data
       NOTION_PARENT: ${NOTION_PARENT:-}
+      NOTION_PARENT_PAGE_ID: ${NOTION_PARENT_PAGE_ID:-}
       CHRONICLE_NOTION_PROJECTS: ${CHRONICLE_NOTION_PROJECTS:-}
       CHRONICLE_PUBLISH_SECONDS: ${CHRONICLE_PUBLISH_SECONDS:-600}
     secrets: [postgres_password, auth_grants, notion_token]

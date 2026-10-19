@@ -51,7 +51,9 @@ def main():
             )
         except subprocess.TimeoutExpired:
             result.update(error="timeout", seconds=90)
-    Path("evidence/codex-auth-diagnostic.json").write_text(json.dumps(result, indent=2) + "\n")
+    Path("evidence/codex-auth-diagnostic.json").write_text(
+        json.dumps(result, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(result, indent=2))
 
 

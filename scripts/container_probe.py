@@ -13,8 +13,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="chronicle-compose-") as tmp:
         root = Path(tmp)
         root.chmod(0o755)  # synthetic secrets only; readable by image UID during test
-        (root / "postgres_password").write_text(secrets.token_urlsafe(32))
-        (root / "notion_token").write_text("")
+        (root / "postgres_password").write_text(secrets.token_urlsafe(32), encoding="utf-8")
+        (root / "notion_token").write_text("", encoding="utf-8")
         grants = [
             {
                 "sha256": hashlib.sha256(token.encode()).hexdigest(),
@@ -27,7 +27,7 @@ def main():
                 ("write", "smoke-write-only-test"),
             ]
         ]
-        (root / "auth.json").write_text(json.dumps(grants))
+        (root / "auth.json").write_text(json.dumps(grants), encoding="utf-8")
         for path in root.iterdir():
             path.chmod(0o644)  # disposable test credentials, not production file permissions
         env = {
@@ -92,7 +92,7 @@ print(json.dumps({'container_ingestion':'passed','deduplication':'passed','read_
             )
             Path(
                 os.environ.get("CHRONICLE_PROBE_EVIDENCE", "evidence/container-probe.json")
-            ).write_text(json.dumps(evidence, indent=2) + "\n")
+            ).write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
             print(json.dumps(evidence))
         except Exception as exc:
             from chronicle.privacy import redact

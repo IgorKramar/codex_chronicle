@@ -1,0 +1,48 @@
+name: chronicler-local
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: chronicle
+      POSTGRES_USER: chronicle
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U chronicle -d chronicle]
+      interval: 5s
+      retries: 15
+  collector:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    init: true
+    entrypoint: [python, /app/deploy/entrypoint.py]
+    command: []
+    ports: ["127.0.0.1:8787:8787"]
+    environment:
+      CHRONICLE_AUTH_FILE: /run/secrets/auth_grants
+      CHRONICLE_STATE_DIR: /data
+      NOTION_PARENT_PAGE_ID: ${NOTION_PARENT_PAGE_ID:-}
+      CHRONICLE_NOTION_PROJECTS: ${CHRONICLE_NOTION_PROJECTS:-}
+      CHRONICLE_PUBLISH_SECONDS: ${CHRONICLE_PUBLISH_SECONDS:-600}
+    secrets: [postgres_password, auth_grants, notion_token]
+    volumes: [collector_data:/data]
+    depends_on:
+      postgres: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+secrets:
+  postgres_password:
+    file: ${CHRONICLE_SECRETS_DIR:?Set a private absolute directory}/postgres_password
+  auth_grants:
+    file: ${CHRONICLE_SECRETS_DIR}/auth.json
+  notion_token:
+    file: ${CHRONICLE_SECRETS_DIR}/notion_token
+volumes:
+  postgres_data:
+  collector_data:

@@ -451,7 +451,7 @@ def main():
     target = ROOT / "contracts/fip/v1"
     target.mkdir(parents=True, exist_ok=True)
     encoded = json.dumps(BUNDLE, ensure_ascii=False, indent=2) + "\n"
-    (target / "fip.schema.json").write_text(encoded)
+    (target / "fip.schema.json").write_text(encoded, encoding="utf-8")
     for name in defs:
         (target / (name + ".schema.json")).write_text(
             json.dumps(
@@ -462,17 +462,18 @@ def main():
                 },
                 indent=2,
             )
-            + "\n"
+            + "\n",
+            encoding="utf-8",
         )
     for dest in [
         ROOT / "src/chronicle/assets/fip/v1",
         ROOT / "packages/fip-contracts/src/fip_contracts/schemas/v1",
     ]:
         dest.mkdir(parents=True, exist_ok=True)
-        (dest / "fip.schema.json").write_text(encoded)
+        (dest / "fip.schema.json").write_text(encoded, encoding="utf-8")
     baseline = target / "compatibility-baseline.json"
     if not baseline.exists():
-        baseline.write_text(encoded)
+        baseline.write_text(encoded, encoding="utf-8")
 
 
 if __name__ == "__main__":

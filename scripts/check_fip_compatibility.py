@@ -49,7 +49,10 @@ if __name__ == "__main__":
     )
     p.add_argument("--current", type=Path, default=Path("contracts/fip/v1/fip.schema.json"))
     a = p.parse_args()
-    issues = check(json.loads(a.baseline.read_text()), json.loads(a.current.read_text()))
+    issues = check(
+        json.loads(a.baseline.read_text(encoding="utf-8")),
+        json.loads(a.current.read_text(encoding="utf-8")),
+    )
     if issues:
         raise SystemExit("\n".join(issues))
     print("FIP v1 compatibility passed: existing public shapes unchanged")

@@ -54,7 +54,7 @@ def main():
 import json, sys
 from importlib.resources import files
 from fip_contracts import validate, schema
-sample=json.loads(files('fip_contracts').joinpath('examples/v1/bootstrap.http-body.json').read_text())
+sample=json.loads(files('fip_contracts').joinpath('examples/v1/bootstrap.http-body.json').read_text(encoding="utf-8"))
 validate('AgentEvent',sample)
 assert 'chronicle' not in sys.modules
 assert schema()['$id']=='urn:fip:v1'
@@ -78,7 +78,9 @@ assert schema()['$id']=='urn:fip:v1'
             "version": "0.2.0",
             "contract_version": "1.0.0",
         }
-        (ROOT / "evidence/fip-package-probe.json").write_text(json.dumps(result, indent=2) + "\n")
+        (ROOT / "evidence/fip-package-probe.json").write_text(
+            json.dumps(result, indent=2) + "\n", encoding="utf-8"
+        )
         print(json.dumps(result))
 
 
