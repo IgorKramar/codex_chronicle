@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codex-chronicle"
+version = "0.1.0"
+description = "Distributed, evidence-aware Codex journal"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+server = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "psycopg[binary]>=3.2,<4"]
+dev = ["pytest>=8,<10", "httpx>=0.28,<1", "ruff>=0.11,<1", "build>=1,<2"]
+
+[project.scripts]
+chronicle = "chronicle.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+chronicle = ["assets/**/*", "assets/**/.*/*"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+ignore = ["B008"]
