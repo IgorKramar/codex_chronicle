@@ -11,8 +11,9 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-server = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "psycopg[binary]>=3.2,<4"]
-dev = ["pytest>=8,<10", "httpx>=0.28,<1", "ruff>=0.11,<1", "build>=1,<2"]
+server = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "psycopg[binary]>=3.2,<4", "jsonschema>=4.23,<5"]
+mcp = ["mcp>=1.20,<2", "jsonschema>=4.23,<5"]
+dev = ["mcp>=1.20,<2", "pytest>=8,<10", "httpx>=0.28,<1", "ruff>=0.11,<1", "build>=1,<2"]
 
 [project.scripts]
 chronicle = "chronicle.cli:main"

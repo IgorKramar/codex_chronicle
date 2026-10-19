@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fip:v1:append_eventArguments",
+  "$ref": "urn:fip:v1#/$defs/append_eventArguments"
+}

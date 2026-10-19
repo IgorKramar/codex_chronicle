@@ -336,6 +336,34 @@ class Publisher:
             pid for pid, p in self.cfg.get("projects", {}).items() if p.get("policy") == "export"
         }
         events = [e for e in self.store.events() if e["project_id"] in allowed]
+        # Optional FIP projection. All memory remains in the ledger even if Notion fails.
+        fip_rows = []
+        with self.store.connect() as c:
+            exists = (
+                c.execute("SELECT to_regclass('fip_records') AS name").fetchone()["name"]
+                if self.store.postgres
+                else c.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='fip_records'"
+                ).fetchone()
+            )
+        if exists:
+            from .fip_store import Ledger
+
+            fip_allowed = set(self.cfg.get("fip_notion_projects", []))
+            fip_rows = Ledger(self.store).rows(
+                list(allowed if "*" in fip_allowed else allowed & fip_allowed)
+            )
+        fip_contexts = {}
+        if fip_rows:
+            from .memory_service import MemoryService
+
+            memory = MemoryService(self.store)
+            for pid in sorted({r["body"]["project_id"] for r in fip_rows}):
+                fip_contexts[pid] = memory.execute(
+                    "get_project_state",
+                    {"project_id": pid},
+                    {"sha256": "0" * 64, "scopes": ["read"], "projects": [pid]},
+                )["data"]
         grouped = defaultdict(list)
         for e in events:
             grouped[e["project_id"]].append(e)
@@ -365,9 +393,12 @@ class Publisher:
                 "Errors": sum(r["exit_code"] != 0 for r in state["tool_results"]),
                 "Open Tasks": state["latest_report"].get("Next Steps", []),
             }
-            current = self.upsert(
-                "Projects", "project:" + pid, project["name"], render_state(state), values
-            )
+            content = render_state(state)
+            if pid in fip_contexts:
+                content = (
+                    "## FIP v1 agent memory\n" + fip_contexts[pid]["llm_summary"] + "\n\n" + content
+                )
+            current = self.upsert("Projects", "project:" + pid, project["name"], content, values)
             if not values["Current State"]:
                 self.call(
                     "PATCH",
@@ -481,6 +512,72 @@ class Publisher:
                     },
                 )
             count += 1
+        for pid, context in fip_contexts.items():
+            project_rows = [r for r in fip_rows if r["body"]["project_id"] == pid]
+            if pid not in grouped:
+                old = self.store.get_meta("notion:page:project:" + pid, {})
+                values = {
+                    "Project ID": pid,
+                    "Description": context["description"],
+                    "Git remote": "",
+                    "Directories": "External agent memory (FIP v1)",
+                    "Status": "Unknown",
+                    "Last Activity": max(r["body"]["timestamp"] for r in project_rows),
+                    "Active Agents": 0,
+                    "Last Commit": "",
+                    "Current State": old.get("url"),
+                    "Errors": sum(
+                        r["body"]["status"] in {"failed", "Failed"} for r in project_rows
+                    ),
+                    "Open Tasks": context["open_questions"],
+                }
+                current = self.upsert(
+                    "Projects", "project:" + pid, context["name"], context["llm_summary"], values
+                )
+                if not old.get("url"):
+                    self.call(
+                        "PATCH",
+                        "/pages/" + current["id"],
+                        {"properties": {"Current State": prop("url", current["url"])}},
+                    )
+                count += 1
+            self.upsert(
+                "Development Journal",
+                "fip-journal:" + pid,
+                "FIP v1 — " + context["name"],
+                context["llm_summary"],
+                {
+                    "Project ID": pid,
+                    "Source ID": project_rows[-1]["body"]["record_id"],
+                    "Evidence": "derived",
+                    "Date": project_rows[-1]["body"]["timestamp"],
+                    "Session": "FIP v1",
+                    "Count": len(project_rows),
+                },
+            )
+            for row in project_rows:
+                r = row["body"]
+                if row["kind"] == "DecisionRecord":
+                    self.upsert(
+                        "Architectural Decisions",
+                        "fip-adr:" + r["record_id"],
+                        r["title"],
+                        r,
+                        {
+                            "Project ID": pid,
+                            "Decision ID": r["decision_id"],
+                            "Status": r["status"],
+                            "Problem": r["problem"],
+                            "Alternatives": r["alternatives"],
+                            "Choice": r["choice"],
+                            "Rationale": r["rationale"],
+                            "Consequences": r["consequences"],
+                            "Components": [r["category"]],
+                            "Source ID": r["record_id"],
+                            "Date": r["timestamp"],
+                            "Supersedes": r["supersedes"] or "",
+                        },
+                    )
         dates = {
             dt.datetime.fromisoformat(e["occurred_at"]).astimezone(dt.UTC).date() for e in events
         }

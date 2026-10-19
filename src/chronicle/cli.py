@@ -71,11 +71,32 @@ def parser():
     x.add_argument("--host", default="127.0.0.1")
     x.add_argument("--port", type=int, default=8787)
     s.add_parser("hook")
+    s.add_parser("mcp")
+    x = s.add_parser("fip-sync")
+    x.add_argument("--force", action="store_true")
+    x.add_argument("--retry-blocked", action="store_true")
     return p
 
 
 def main(argv=None):
     a = parser().parse_args(argv)
+    if a.command == "mcp":
+        from .mcp_server import main as mcp_main
+
+        mcp_main()
+        return 0
+    if a.command == "fip-sync":
+        from .fip_client import FipClient
+
+        client = FipClient(
+            os.environ["CHRONICLE_API_URL"],
+            os.environ["CHRONICLE_API_TOKEN"],
+            os.environ.get("CHRONICLE_FIP_OUTBOX"),
+            os.environ.get("CHRONICLE_CLIENT_ID"),
+            os.environ.get("CHRONICLE_ALLOW_LOOPBACK_HTTP") == "1",
+        )
+        output(client.flush(a.force, a.retry_blocked))
+        return 0
     if a.command == "hook":
         from .hook import main as hook
 

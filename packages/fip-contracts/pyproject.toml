@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "fip-contracts"
+version = "1.0.0"
+description = "FIP v1 JSON Schema contracts for interoperable agent memory"
+requires-python = ">=3.11"
+dependencies = ["jsonschema>=4.23,<5"]
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-data]
+fip_contracts = ["schemas/v1/*.json"]

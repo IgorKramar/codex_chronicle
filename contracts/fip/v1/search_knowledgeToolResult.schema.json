@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:fip:v1:search_knowledgeToolResult",
+  "$ref": "urn:fip:v1#/$defs/search_knowledgeToolResult"
+}

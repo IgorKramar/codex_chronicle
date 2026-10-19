@@ -1,16 +1,13 @@
 import asyncio
 import datetime as dt
-import hashlib
-import hmac
-import json
 import os
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, Field
 
+from .auth import AuthRegistry
 from .events import now, validate_event
 from .state import build_state, period_summary, session_key
 from .store import ConflictError, Store
@@ -23,18 +20,20 @@ class EventBatch(BaseModel):
 
 def create_app(location=None, grants=None, publisher_cfg=None):
     store = Store(location or os.environ.get("CHRONICLE_DATABASE", "collector.db"))
-    if grants is None:
-        auth_file = os.environ.get("CHRONICLE_AUTH_FILE")
-        if not auth_file:
-            raise RuntimeError("CHRONICLE_AUTH_FILE is required; no default credentials")
-        grants = json.loads(Path(auth_file).read_text(encoding="utf-8"))
-    if not grants or any(len(g.get("sha256", "")) != 64 for g in grants):
-        raise RuntimeError("Explicit hashed authentication grants required")
+    auth_file = os.environ.get("CHRONICLE_AUTH_FILE") if grants is None else None
+    if grants is None and not auth_file:
+        raise RuntimeError("CHRONICLE_AUTH_FILE is required; no default credentials")
+    registry = AuthRegistry(grants=grants, path=auth_file)
     if not publisher_cfg and os.environ.get("NOTION_PARENT"):
         publisher_cfg = {
             "notion_parent": os.environ["NOTION_PARENT"],
             "home": os.environ.get("CHRONICLE_STATE_DIR", "/data"),
             "publish_seconds": int(os.environ.get("CHRONICLE_PUBLISH_SECONDS", "600")),
+            "fip_notion_projects": [
+                p.strip()
+                for p in os.environ.get("CHRONICLE_NOTION_PROJECTS", "").split(",")
+                if p.strip()
+            ],
         }
 
     @asynccontextmanager
@@ -51,6 +50,18 @@ def create_app(location=None, grants=None, publisher_cfg=None):
                         e["project_id"]: {**e["project"], "policy": "export"}
                         for e in store.events()
                     }
+                    for row in app.state.memory.ledger.rows():
+                        r = row["body"]
+                        if r["project_id"] not in cfg.get(
+                            "fip_notion_projects", []
+                        ) and "*" not in cfg.get("fip_notion_projects", []):
+                            continue
+                        project = cfg["projects"].setdefault(
+                            r["project_id"],
+                            {"name": r["project_id"], "remote": "", "policy": "export"},
+                        )
+                        if row["kind"] == "ProjectContext":
+                            project["name"] = r["name"]
                     await asyncio.to_thread(publish_store, store, cfg)
                 except Exception as exc:
                     store.set_meta("publisher_error", {"code": type(exc).__name__, "at": now()})
@@ -78,10 +89,12 @@ def create_app(location=None, grants=None, publisher_cfg=None):
     bearer = HTTPBearer(auto_error=False)
 
     def auth(c: HTTPAuthorizationCredentials = Depends(bearer)):
-        digest = hashlib.sha256(c.credentials.encode()).hexdigest() if c else ""
-        for grant in grants:
-            if hmac.compare_digest(grant["sha256"], digest):
-                return grant
+        try:
+            grant = registry.authenticate(c.credentials) if c else None
+        except (OSError, ValueError, TypeError, KeyError):
+            raise HTTPException(503, "Authentication configuration unavailable") from None
+        if grant is not None:
+            return grant
         raise HTTPException(401, "Authentication required", headers={"WWW-Authenticate": "Bearer"})
 
     def reader(g=Depends(auth)):
@@ -205,4 +218,7 @@ def create_app(location=None, grants=None, publisher_cfg=None):
             "sessions": len({session_key(e) for e in events}),
         }
 
+    from .fip_http import attach
+
+    attach(app, store, auth)
     return app

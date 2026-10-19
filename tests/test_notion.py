@@ -89,3 +89,26 @@ def test_local_project_is_not_published(cfg):
     with serve(mock.app) as url:
         assert publisher(cfg, a.store, url).publish()["projects"] == 0
     assert len(mock.pages) == 1  # empty observatory only; no project data
+
+
+def test_fip_projection_requires_opt_in_and_preserves_stable_state(cfg):
+    from fip_helpers import event as external_event
+    from fip_helpers import grant
+
+    from chronicle.memory_service import MemoryService
+
+    a = Agent(cfg)
+    memory = MemoryService(a.store)
+    e = external_event(summary="WORLD FORGE game design discovery")
+    memory.execute("append_event", {"record": e, "idempotency_key": "fip-notion"}, grant())
+    cfg["projects"]["game-one"] = {"name": "Forge", "remote": "", "policy": "export"}
+    mock = MockNotion()
+    with serve(mock.app) as url:
+        p = publisher(cfg, a.store, url)
+        assert p.publish()["projects"] == 0
+        cfg["fip_notion_projects"] = ["game-one"]
+        assert p.publish()["projects"] == 1
+        before = a.store.get_meta("notion:page:project:game-one")["id"]
+        assert p.publish()["projects"] == 1
+        assert a.store.get_meta("notion:page:project:game-one")["id"] == before
+        assert "WORLD FORGE" in json.dumps(mock.pages)
