@@ -165,6 +165,22 @@ def attach(app, store, auth):
                     }
                 },
             }
+        extra["parameters"].extend(
+            [
+                {
+                    "name": "FIP-Version",
+                    "in": "header",
+                    "required": False,
+                    "schema": {"type": "string", "enum": ["v1"], "default": "v1"},
+                },
+                {
+                    "name": "X-Request-ID",
+                    "in": "header",
+                    "required": False,
+                    "schema": {"type": "string", "maxLength": 256},
+                },
+            ]
+        )
         app.add_api_route(
             path,
             endpoint(operation),
@@ -173,6 +189,16 @@ def attach(app, store, auth):
             tags=["FIP v1"],
             openapi_extra=extra,
         )
+
+    @app.exception_handler(Exception)
+    async def unexpected(request, exc):
+        if is_fip(request):
+            result = error_response(
+                ApiFault("internal_error", "Memory service request failed", 500),
+                request_id(request),
+            )
+            return JSONResponse(result, status_code=500)
+        return JSONResponse({"detail": "Internal Server Error"}, status_code=500)
 
     # Primary evidence resolution is separate from the paginated history and never raw SQL.
     @app.get(

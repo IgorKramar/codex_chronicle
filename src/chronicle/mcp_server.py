@@ -87,7 +87,8 @@ async def run():
         os.environ.get("CHRONICLE_CLIENT_ID"),
         os.environ.get("CHRONICLE_ALLOW_LOOPBACK_HTTP") == "1",
     )
-    server = create_server(client, os.environ.get("CHRONICLE_MCP_WRITE_ENABLED") == "1")
+    writes_enabled = os.environ.get("CHRONICLE_MCP_WRITE_ENABLED") == "1"
+    server = create_server(client, writes_enabled)
     stop = asyncio.Event()
 
     async def retry_loop():
@@ -98,13 +99,14 @@ async def run():
             except TimeoutError:
                 pass
 
-    task = asyncio.create_task(retry_loop())
+    task = asyncio.create_task(retry_loop()) if writes_enabled else None
     try:
         async with stdio_server() as (read, write):
             await server.run(read, write, server.create_initialization_options())
     finally:
         stop.set()
-        await task
+        if task is not None:
+            await task
 
 
 def main():

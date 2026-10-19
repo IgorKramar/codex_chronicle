@@ -14,7 +14,13 @@ from chronicle.store import Store
 
 def docker(*args, data=None):
     return subprocess.run(
-        ["docker", "exec", "-i", "chronicle-postgres-probe", *args],
+        [
+            "docker",
+            "exec",
+            "-i",
+            os.environ.get("CHRONICLE_TEST_CONTAINER", "chronicle-postgres-probe"),
+            *args,
+        ],
         input=data,
         capture_output=True,
         check=True,
@@ -42,6 +48,19 @@ if __name__ == "__main__":
             )
             source.append([e], True)
             source.set_meta("notion:uncertain:test", True)
+            from chronicle.memory_service import MemoryService
+
+            sample = json.loads(
+                Path("contracts/fip/v1/examples/bootstrap.request.json").read_text()
+            )
+            actor = {
+                "principal_id": "forge-planner",
+                "agent_id": "forge-planner",
+                "allow_content": True,
+                "scopes": ["read", "write"],
+                "projects": ["world-forge-demo"],
+            }
+            fip_ack = MemoryService(source).execute("append_event", sample, actor)
             dump = docker("pg_dump", "-U", "postgres", "-d", source_db, "-Fc")
             docker("pg_restore", "-U", "postgres", "-d", restored_db, "--exit-on-error", data=dump)
             restored = Store(urlunsplit(parsed._replace(path="/" + restored_db)))
@@ -49,15 +68,22 @@ if __name__ == "__main__":
             assert restored.get_meta("notion:uncertain:test") is True
             restored.append([e], True)
             assert restored.stats()["total"] == 1
+            restored_memory = MemoryService(restored)
+            assert restored_memory.execute("append_event", sample, actor) == fip_ack
+            assert len(restored_memory.ledger.rows()) == 2
             evidence = {
                 "postgres_backup_restore": "passed",
                 "events_restored": 1,
+                "fip_records_restored": 2,
+                "fip_idempotency_restored": True,
                 "uncertain_write_fence_restored": True,
                 "replay_deduplicated": True,
                 "backup_bytes": len(dump),
                 "backup_sha256": hashlib.sha256(dump).hexdigest(),
             }
-            Path("evidence/backup-restore.json").write_text(json.dumps(evidence, indent=2) + "\n")
+            Path(
+                os.environ.get("CHRONICLE_PROBE_EVIDENCE", "evidence/backup-restore.json")
+            ).write_text(json.dumps(evidence, indent=2) + "\n")
             print(json.dumps(evidence))
         finally:
             docker("dropdb", "-U", "postgres", source_db)

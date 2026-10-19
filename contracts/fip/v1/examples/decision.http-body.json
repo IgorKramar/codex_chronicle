@@ -1,0 +1,40 @@
+{
+  "api_version": "v1",
+  "request_id": "req-decision-fixed-tick-001",
+  "project_id": "world-forge-demo",
+  "timestamp": "2026-10-19T10:00:00Z",
+  "status": "Proposed",
+  "artifact_refs": [],
+  "evidence": [
+    {
+      "evidence_id": "ref:6893cf3376aad71bee6777a8",
+      "project_id": "world-forge-demo",
+      "kind": "event",
+      "target_id": "evt-design-001",
+      "uri": null,
+      "provenance": "agent_reported"
+    }
+  ],
+  "record_id": "decision-fixed-tick-001",
+  "revision": 1,
+  "supersedes": null,
+  "provenance": "agent_reported",
+  "agent_id": "forge-planner",
+  "session_id": "forge-session-001",
+  "decision_id": "combat-clock",
+  "category": "game_design",
+  "title": "Fixed combat tick",
+  "problem": "Replay nondeterminism",
+  "alternatives": [
+    "Fixed tick",
+    "Variable tick"
+  ],
+  "choice": "Fixed tick",
+  "rationale": "Deterministic replay",
+  "consequences": [
+    "Bound simulation step size"
+  ],
+  "source_event_ids": [
+    "evt-design-001"
+  ]
+}

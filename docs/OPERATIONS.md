@@ -90,7 +90,7 @@ python scripts/provision.py --auth-file /private/chronicle/auth.json \
   --credential-file /private/chronicle/jarvis.env --read-only --project PROJECT_ID
 ```
 
-`--project` повторяемый. `*` даёт доступ всем проектам — используйте осознанно только для read operators. Write grant проверяет computer_id и project_id. Reader token не может писать, writer не может читать. Для ротации создайте новый grant, обновите agent, удалите старый hash и перезапустите Collector. Auth file загружается при старте.
+`--project` повторяемый. `*` даёт доступ всем проектам — используйте осознанно только для read operators. Write grant проверяет computer_id и project_id. Reader token не может писать, writer не может читать. Для ротации создайте новый grant, обновите agent, удалите старый hash и перечитайте права клиента. Начиная с 0.2.0 auth file перечитывается на каждом запросе, restart не нужен.
 
 ## Docker Compose
 
@@ -109,7 +109,7 @@ docker compose -f deploy/compose.yaml config --quiet
 docker compose -f deploy/compose.yaml up -d --build
 ```
 
-Для среды с корпоративным CA используйте BuildKit `proxy_ca` secret и сохраните proxy/CA policy. Пример локальной сборки: `docker build --secret id=proxy_ca,src=/etc/ssl/certs/ca-certificates.crt -f deploy/Dockerfile -t codex-chronicle:0.1.0 .`. Для runtime outbound HTTPS смонтируйте доверенный CA bundle readonly и задайте SSL_CERT_FILE. Не добавляйте приватные сертификаты/ключи в image layers.
+Для среды с корпоративным CA используйте BuildKit `proxy_ca` secret и сохраните proxy/CA policy. Пример локальной сборки: `docker build --secret id=proxy_ca,src=/etc/ssl/certs/ca-certificates.crt -f deploy/Dockerfile -t codex-chronicle:0.2.0 .`. Для runtime outbound HTTPS смонтируйте доверенный CA bundle readonly и задайте SSL_CERT_FILE. Не добавляйте приватные сертификаты/ключи в image layers.
 
 GET /healthz — process liveness, не доказательство доступности Notion/PostgreSQL. `/v1/metrics` и `/v1/computers` требуют scoped read token. Следите за pending, hook-error.json, quarantine, agent-health.json (PID/время), `connection`, `last_error`, `notion:last_publish`, `publisher_error` в store meta. Редактирование/удаление файлов конфигурации требует перезапуска worker при повреждённом JSON.
 
@@ -134,3 +134,7 @@ Backups: согласованный `pg_dump -Fc` + publisher metadata volume. �
 ## Удаление
 
 Сначала остановите/disable user service или Windows task, затем `chronicle pause` и `chronicle uninstall`. Штатные команды удаляют только Chronicle plugin и его marketplace. История, env files и service definitions автоматически не уничтожаются; удалите их явно после export/backup. Другие plugins и hooks сохраняются.
+
+## FIP v1 / MCP extension (0.2.0)
+
+Новые REST/MCP интерфейсы, права и offline delivery описаны в API.md и INTEGRATION.md. Schema changes в старом event store не нужны; дополнительные fip_records/fip_operations создаются автоматически при запуске API. Backup включает обе таблицы. FIP ledger не очищается legacy retention/purge CLI. Pending external-client outbox резервируется отдельно на машине producer. MCP подключается явно и по умолчанию read-only; CHRONICLE_MCP_WRITE_ENABLED=0 также запрещает background flush. Notion для новой FIP памяти требует отдельного CHRONICLE_NOTION_PROJECTS allowlist.

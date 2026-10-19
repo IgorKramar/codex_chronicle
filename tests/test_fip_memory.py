@@ -312,3 +312,32 @@ def test_notion_outage_never_blocks_fip_reads_or_writes(tmp_path, monkeypatch):
             "items"
         ]
     assert app.state.store.get_meta("publisher_error")["code"] == "TransportError"
+
+
+def test_current_state_honours_archived_context_and_retracted_knowledge(service):
+    first = event()
+    context = {
+        **base(),
+        "name": "Game",
+        "description": "Game context",
+        "current_goal": "Replay",
+        "implemented": [],
+        "open_questions": [],
+        "llm_summary": "",
+        "source_ids": [],
+    }
+    mechanic = knowledge(first["record_id"])
+    first["project_context"] = context
+    first["knowledge"] = [mechanic]
+    write(service, "append_event", first)
+    assert service.execute("get_project_state", {"project_id": "game-one"}, grant())["data"][
+        "implemented"
+    ]
+    second = event()
+    second["project_context"] = {**revision(context), "status": "archived"}
+    second["knowledge"] = [{**revision(mechanic), "status": "retracted"}]
+    write(service, "append_event", second)
+    current = service.execute("get_project_state", {"project_id": "game-one"}, grant())["data"]
+    assert current["status"] == "archived"
+    assert current["implemented"] == []
+    assert len(service.ledger.rows()) == 6  # revisions preserved, never overwritten

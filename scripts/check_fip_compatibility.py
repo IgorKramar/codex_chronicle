@@ -7,11 +7,24 @@ from pathlib import Path
 
 def shape(value):
     if isinstance(value, dict):
-        return {
-            k: shape(v)
-            for k, v in value.items()
-            if k not in {"description", "title", "examples", "$comment"}
-        }
+        result = {}
+        for key, child in value.items():
+            if key in {"description", "title", "examples", "$comment"}:
+                continue
+            if key in {
+                "properties",
+                "patternProperties",
+                "$defs",
+                "definitions",
+                "dependentSchemas",
+            }:
+                # Property/definition names are data, even when named title or description.
+                result[key] = {name: shape(schema) for name, schema in child.items()}
+            elif key in {"const", "enum", "default"}:
+                result[key] = child
+            else:
+                result[key] = shape(child)
+        return result
     if isinstance(value, list):
         return [shape(v) for v in value]
     return value

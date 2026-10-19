@@ -2,6 +2,7 @@ import asyncio
 import os
 import sys
 
+import pytest
 from conftest import serve
 from fip_helpers import event, grant
 from mcp import ClientSession, StdioServerParameters
@@ -11,6 +12,7 @@ from chronicle.collector import create_app
 from chronicle.config import atomic_json
 from chronicle.contracts import validate
 from chronicle.fip_client import FipClient
+from chronicle.memory_service import ApiFault
 from chronicle.transport import TransportError
 
 
@@ -133,3 +135,61 @@ def test_mcp_real_stdio_sdk_roundtrip_and_write_then_other_reader(tmp_path):
             assert found["data"]["items"][0]["source_event_ids"] == [e["record_id"]]
 
         asyncio.run(scenario())
+
+
+def test_http_client_session_path_and_terminal_authorization_error(tmp_path):
+    app = create_app(tmp_path / "server.db", [grant(), grant("reader", "reader", ["read"])])
+    with serve(app) as url:
+        writer = FipClient(url, "agent-a", tmp_path / "writer.db", "writer", True)
+        e = event()
+        e["session_id"] = "session/path"
+        writer.call("append_event", {"record": e, "idempotency_key": "slash-session"})
+        reader = FipClient(url, "reader", tmp_path / "reader.db", allow_loopback_http=True)
+        detail = reader.call(
+            "get_session_details", {"project_id": "game-one", "session_id": "session/path"}
+        )
+        assert detail["data"]["session_id"] == "session/path"
+        with pytest.raises(ApiFault) as error:
+            reader.call("get_project_state", {"project_id": "private"})
+        assert error.value.retryable is False
+
+
+def test_readonly_mcp_does_not_background_deliver_previous_writes(tmp_path, monkeypatch):
+    app = create_app(tmp_path / "db", [grant()])
+    with serve(app) as url:
+        outbox = tmp_path / "pending.db"
+        producer = FipClient(url, "agent-a", outbox, "same-node", True)
+
+        def offline(*args):
+            raise TransportError()
+
+        monkeypatch.setattr(producer, "_send", offline)
+        producer.call(
+            "append_event", {"record": event(), "idempotency_key": "pending-before-readonly"}
+        )
+        with producer.store.connect() as c:
+            c.execute("UPDATE fip_outbox SET next_attempt=0")
+
+        async def scenario():
+            env = {
+                **os.environ,
+                "CHRONICLE_API_URL": url,
+                "CHRONICLE_API_TOKEN": "agent-a",
+                "CHRONICLE_CLIENT_ID": "same-node",
+                "CHRONICLE_FIP_OUTBOX": str(outbox),
+                "CHRONICLE_ALLOW_LOOPBACK_HTTP": "1",
+                "CHRONICLE_MCP_WRITE_ENABLED": "0",
+            }
+            async with stdio_client(
+                StdioServerParameters(
+                    command=sys.executable, args=["-m", "chronicle.mcp_server"], env=env
+                )
+            ) as (read, write):
+                async with ClientSession(read, write) as session:
+                    await session.initialize()
+                    assert not (await session.call_tool("get_capabilities", {})).isError
+                    await asyncio.sleep(0.15)
+
+        asyncio.run(scenario())
+        assert app.state.memory.ledger.rows() == []
+        assert producer.status()["pending"] == 1

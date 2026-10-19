@@ -1,0 +1,47 @@
+{
+  "api_version": "v1",
+  "request_id": "req-evt-design-001",
+  "project_id": "world-forge-demo",
+  "timestamp": "2026-10-19T10:00:00Z",
+  "status": "completed",
+  "artifact_refs": [],
+  "evidence": [],
+  "record_id": "evt-design-001",
+  "revision": 1,
+  "supersedes": null,
+  "provenance": "agent_reported",
+  "agent_id": "forge-planner",
+  "session_id": "forge-session-001",
+  "event_id": "evt-design-001",
+  "event_type": "design_research",
+  "category": "game_design",
+  "summary": "Compare fixed and variable combat simulation ticks",
+  "knowledge": [],
+  "test_results": [],
+  "project_context": {
+    "api_version": "v1",
+    "request_id": "req-context-game-001",
+    "project_id": "world-forge-demo",
+    "timestamp": "2026-10-19T10:00:00Z",
+    "status": "active",
+    "artifact_refs": [],
+    "evidence": [],
+    "record_id": "context-game-001",
+    "revision": 1,
+    "supersedes": null,
+    "provenance": "agent_reported",
+    "agent_id": "forge-planner",
+    "session_id": "forge-session-001",
+    "name": "WORLD FORGE Demo",
+    "description": "Synthetic deterministic combat prototype",
+    "current_goal": "Make combat replays reproducible",
+    "implemented": [],
+    "open_questions": [
+      "Replay verification"
+    ],
+    "llm_summary": "Prototype context; results need primary evidence.",
+    "source_ids": [
+      "evt-design-001"
+    ]
+  }
+}

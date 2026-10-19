@@ -141,7 +141,7 @@ def legacy_records(events):
             knowledge = {
                 **kbase,
                 "knowledge_id": kbase["record_id"],
-                "category": "implementation",
+                "category": "project_context",
                 "title": report["Task"][:256],
                 "text": json_text(report)[:12000],
                 "source_event_ids": [eid],
@@ -193,7 +193,19 @@ class MemoryService:
 
     def capabilities(self, grant, args):
         scopes = grant.get("scopes", [])
-        operations = [op for op in OPERATIONS if op not in WRITE_TYPES or "write" in scopes]
+        operations = [
+            op
+            for op in OPERATIONS
+            if op == "get_capabilities"
+            or (
+                op in WRITE_TYPES
+                and "write" in scopes
+                and grant.get("allow_content") is True
+                and grant.get("principal_id")
+                and grant.get("agent_id")
+            )
+            or (op not in WRITE_TYPES and "read" in scopes)
+        ]
         return {
             **envelope(args.get("request_id")),
             "service": "Chronicler",
@@ -202,7 +214,7 @@ class MemoryService:
             "operations": operations,
             "memory_categories": CATEGORIES,
             "transports": ["http-rest", "mcp-stdio"],
-            "search_semantics": "Unicode casefold substring AND for 1-8 whitespace-separated terms (2-64 characters each), across title/text/summary/decision fields; no semantic search, stemming or relevance ranking; ordered by receipt sequence.",
+            "search_semantics": "Unicode casefold substring AND for 1-8 whitespace-separated terms (2-64 characters each), across title/text/summary/decision fields; no semantic search, stemming or relevance ranking; stable source order: legacy projections, then FIP receipt sequence, then derived projections; no cross-ledger total order.",
             "max_page_size": 100,
             "max_response_bytes": 131072,
             "write_requires_idempotency_key": True,
@@ -394,7 +406,11 @@ class MemoryService:
         if not selected and not old:
             raise ApiFault("not_found", "Project or record not found", 404)
         name = own["name"] if own else old[0]["project"]["name"] if old else pid
-        recent = selected[-20:]
+        recent = [
+            (kind, r)
+            for kind, r in selected
+            if not r["record_id"].startswith(("derived:", "failure:"))
+        ][-20:]
         lines = ["Проект: " + name]
         if own:
             lines += [own["description"], "Цель: " + own["current_goal"]]
@@ -412,15 +428,17 @@ class MemoryService:
             pid,
             args.get("request_id"),
             timestamp=max((r["timestamp"] for _, r in selected), key=dt.datetime.fromisoformat),
-            status="active",
+            status=own["status"] if own else "unknown",
         )
+        latest_knowledge = {
+            r["knowledge_id"]: r
+            for kind, r in selected
+            if kind == "KnowledgeRecord" and r["provenance"] != "derived"
+        }
         implemented = [
             r["title"]
-            for kind, r in selected
-            if kind == "KnowledgeRecord"
-            and r["category"] == "implementation"
-            and r["status"] in {"active", "verified"}
-            and r["provenance"] != "derived"
+            for r in latest_knowledge.values()
+            if r["category"] == "implementation" and r["status"] in {"active", "verified"}
         ][-20:]
         questions = [
             r.get("summary", "")
@@ -625,7 +643,7 @@ class MemoryService:
                 403,
             )
         original = args["record"]
-        if len(json.dumps(original).encode()) > 64000:
+        if len(json.dumps(original, ensure_ascii=False).encode()) > 64000:
             raise ApiFault("request_too_large", "FIP record exceeds 64000 bytes", 413)
         record = redact(original)
         kind = WRITE_TYPES[operation]
@@ -710,16 +728,16 @@ class MemoryService:
                 )
             if r["provenance"] != "agent_reported" and "observe" not in grant.get("scopes", []):
                 raise ApiFault("forbidden", "External claims must be agent_reported", 403)
-            if prior and (
-                kind == "AgentEvent"
-                or prior["agent_id"] != grant["agent_id"]
+            if prior and kind == "AgentEvent":
+                raise ApiFault(
+                    "immutable_event", "An event ID cannot be reused with a new operation key", 409
+                )
+            if (
+                prior
+                and prior["agent_id"] != grant["agent_id"]
                 and "revise" not in grant.get("scopes", [])
             ):
-                raise ApiFault(
-                    "forbidden",
-                    "Cross-author revision requires revise scope; events are immutable",
-                    403,
-                )
+                raise ApiFault("forbidden", "Cross-author revision requires revise scope", 403)
             if (
                 kind == "DecisionRecord"
                 and (r["status"] == "Accepted" or prior and prior["status"] == "Accepted")

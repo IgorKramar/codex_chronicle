@@ -1,0 +1,8 @@
+{
+  "pluginId": "codex-chronicle@chronicle-local",
+  "installed": true,
+  "enabled": true,
+  "version": "0.2.0",
+  "mcp_auto_enabled": false,
+  "hook_trust": "Not bypassed by installer"
+}

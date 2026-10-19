@@ -29,3 +29,7 @@ API Notion фиксируется на версии 2026-03-11; версия з�
 Shell hooks: local orchestration, CLI/desktop, scripts должны находиться на машине исполнения. Cloud orchestration не поддерживает эти shell hooks. Плагин с hooks не предназначен для public directory. Доверие hooks пользователь подтверждает в Codex; установщик его не обходит. `async` не используется для durable capture: незавершённые background hooks отменяются при закрытии. SessionEnd ограничен 3 секундами. Windows использует commandWindows и отдельную установку Python; WSL — Linux установка внутри WSL. Реальная совместимость Windows не считается проверенной Linux-тестами.
 
 Нет стабильного официального transcript API: backfill поддерживает только экспорт Chronicle JSONL v1 с отдельным согласием. Скрытые рассуждения не читаются. Автоматическая наблюдаемая сводка гарантируется обработкой событий; содержательные объяснения зависят от явно отправленного MemoryReport. Hook не запускает несуществующий agent/prompt handler и не принуждает модель к скрытому отчёту.
+
+## FIP v1 extension (0.2.0)
+
+ADR-0004 adds native fip_records/fip_operations tables beside the original event log, MemoryService and independent REST/MCP adapters. Contracts/schemas/compatibility are documented in docs/API.md and contracts/fip/v1/README.md. No Notion dependency on the read/write path. Legacy events are projected read-only. New FIP ledger has its own receipt sequence; there is no total ordering across both ledgers. New content is Notion opt-in via fip_notion_projects.

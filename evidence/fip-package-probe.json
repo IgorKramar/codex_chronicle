@@ -1,0 +1,9 @@
+{
+  "core_wheel_without_server_dependencies": "passed",
+  "core_init_prepare_install_status": "passed",
+  "standalone_fip_contracts_without_chronicle": "passed",
+  "bundled_schemas_and_examples": "passed",
+  "memory_core_without_http_mcp_notion_imports": "passed",
+  "version": "0.2.0",
+  "contract_version": "1.0.0"
+}

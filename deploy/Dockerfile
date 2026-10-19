@@ -11,4 +11,4 @@ RUN useradd --uid 10001 --create-home chronicle && mkdir /data && chown chronicl
 USER chronicle
 ENV CHRONICLE_STATE_DIR=/data PYTHONDONTWRITEBYTECODE=1
 EXPOSE 8787
-CMD ["python", "-m", "uvicorn", "chronicle.collector:create_app", "--factory", "--host", "0.0.0.0", "--port", "8787", "--no-access-log"]
+CMD ["python", "-m", "uvicorn", "chronicle.collector:create_app", "--factory", "--host", "127.0.0.1", "--port", "8787", "--no-access-log"]

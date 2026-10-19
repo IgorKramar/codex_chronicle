@@ -73,3 +73,28 @@ def test_fip_version_compatibility_detects_breaking_changes():
     changed = copy.deepcopy(BUNDLE)
     changed["$defs"]["NewOptionalOperation"] = {"type": "string"}
     assert not module.check(baseline, changed)
+    changed = copy.deepcopy(BUNDLE)
+    changed["$defs"]["KnowledgeRecord"]["properties"]["title"]["type"] = "integer"
+    assert module.check(baseline, changed)
+    changed = copy.deepcopy(BUNDLE)
+    del changed["$defs"]["ProjectContext"]["properties"]["description"]
+    assert module.check(baseline, changed)
+
+
+def test_distributed_examples_validate_against_public_schema():
+    root = Path(__file__).parents[1] / "contracts/fip/v1/examples"
+    mapping = {
+        "bootstrap": "append_event",
+        "experiment": "append_event",
+        "decision": "register_decision",
+        "artifact": "register_artifact",
+    }
+    for label, operation in mapping.items():
+        validate(
+            operation + "Arguments", json.loads((root / (label + ".request.json")).read_text())
+        )
+        validate(
+            operation + "Response", json.loads((root / (label + ".response.json")).read_text())
+        )
+    for op in ("get_capabilities", "get_project_state", "search_knowledge"):
+        validate(op + "Response", json.loads((root / (op + ".response.json")).read_text()))

@@ -8,3 +8,6 @@ recursive-include evidence *.md *.json *.xml
 recursive-include src/chronicle/assets *
 
 recursive-include .github *.yml
+
+recursive-include contracts *.json *.md
+recursive-include packages/fip-contracts *.py *.json *.toml *.md

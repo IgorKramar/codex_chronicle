@@ -61,10 +61,12 @@ class FipClient:
                 return self._send(operation, args)
             except TransportError as exc:
                 raise ApiFault(
-                    "remote_unavailable",
+                    "remote_unavailable"
+                    if exc.status in {0, 408, 429, 500, 502, 503, 504, 529}
+                    else "remote_rejected",
                     "Memory read failed; local Codex work may continue without memory",
                     exc.status or 503,
-                    True,
+                    exc.status in {0, 408, 429, 500, 502, 503, 504, 529},
                 ) from None
         if not self.client_id:
             raise ApiFault(
@@ -72,6 +74,8 @@ class FipClient:
             )
         safe_args = redact(args)
         validate(operation + "Arguments", safe_args)
+        if len(json.dumps(safe_args["record"], ensure_ascii=False).encode()) > 64000:
+            raise ApiFault("request_too_large", "FIP write exceeds byte budget", 413)
         key = safe_args["idempotency_key"]
         digest = fingerprint(safe_args)
         identity = (self.url, self.client_id, operation, key)

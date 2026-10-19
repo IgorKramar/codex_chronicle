@@ -521,7 +521,7 @@ class Publisher:
                     "Description": context["description"],
                     "Git remote": "",
                     "Directories": "External agent memory (FIP v1)",
-                    "Status": "Unknown",
+                    "Status": context["status"],
                     "Last Activity": max(r["body"]["timestamp"] for r in project_rows),
                     "Active Agents": 0,
                     "Last Commit": "",

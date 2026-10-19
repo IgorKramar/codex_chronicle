@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Codex Chronicle read and ingestion API",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "paths": {
     "/v1/events": {
@@ -432,6 +432,3092 @@
           }
         ]
       }
+    },
+    "/v1/memory/projects": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_list_projects",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/list_projectsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/state": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_project_state",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_project_stateResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/history": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_project_history",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_project_historyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "architecture",
+                "game_design",
+                "implementation",
+                "experiment",
+                "decision",
+                "failure",
+                "discovery",
+                "testing",
+                "project_context"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/sessions": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_list_sessions",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/list_sessionsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/sessions/{session_id}": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_session_details",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_session_detailsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/search": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_search_knowledge",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/search_knowledgeResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "architecture",
+                "game_design",
+                "implementation",
+                "experiment",
+                "decision",
+                "failure",
+                "discovery",
+                "testing",
+                "project_context"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/decisions": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_decisions",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_decisionsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "architecture",
+                "game_design",
+                "implementation",
+                "experiment",
+                "decision",
+                "failure",
+                "discovery",
+                "testing",
+                "project_context"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/failures": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_failures",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_failuresResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "architecture",
+                "game_design",
+                "implementation",
+                "experiment",
+                "decision",
+                "failure",
+                "discovery",
+                "testing",
+                "project_context"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/artifacts": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_artifacts",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_artifactsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/test-results": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_test_results",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_test_resultsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "max_response_bytes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 8192,
+              "maximum": 131072
+            }
+          },
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/events": {
+      "post": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_append_event",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/append_eventResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentEvent"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/memory/decisions": {
+      "post": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_register_decision",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/register_decisionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionRecord"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/memory/artifacts": {
+      "post": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_register_artifact",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/register_artifactResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArtifactReference"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/capabilities": {
+      "get": {
+        "tags": [
+          "FIP v1"
+        ],
+        "summary": "Handle",
+        "operationId": "fip_v1_get_capabilities",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FIP v1 response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/get_capabilitiesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "426": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "FIP ApiError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "api_version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "const": "v1"
+            }
+          },
+          {
+            "name": "request_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "FIP-Version",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "v1"
+              ],
+              "default": "v1"
+            }
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        ]
+      }
+    },
+    "/v1/memory/projects/{project_id}/records/{record_id}": {
+      "get": {
+        "tags": [
+          "FIP v1 evidence"
+        ],
+        "summary": "Resolve",
+        "operationId": "resolve_v1_memory_projects__project_id__records__record_id__get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "project_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Project Id"
+            }
+          },
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Record Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordLookupResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -488,6 +3574,4021 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "Confidence": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "enum": [
+              "unknown",
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "basis": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "label",
+          "basis"
+        ],
+        "additionalProperties": false
+      },
+      "EvidenceReference": {
+        "type": "object",
+        "properties": {
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "kind": {
+            "enum": [
+              "event",
+              "record",
+              "commit",
+              "test_result",
+              "uri"
+            ]
+          },
+          "target_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "uri": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri",
+                "maxLength": 2000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "evidence_id",
+          "project_id",
+          "kind",
+          "target_id",
+          "uri",
+          "provenance"
+        ],
+        "additionalProperties": false
+      },
+      "ArtifactLink": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "record_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "artifact_id",
+          "record_id"
+        ],
+        "additionalProperties": false
+      },
+      "ProjectContext": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "archived",
+              "unknown"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "current_goal": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "implemented": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "maxItems": 30
+          },
+          "open_questions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "maxItems": 30
+          },
+          "llm_summary": {
+            "type": "string",
+            "maxLength": 12000
+          },
+          "source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "maxItems": 100
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "name",
+          "description",
+          "current_goal",
+          "implemented",
+          "open_questions",
+          "llm_summary",
+          "source_ids"
+        ],
+        "additionalProperties": false
+      },
+      "AgentSession": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "Running",
+              "Completed",
+              "Failed",
+              "Interrupted",
+              "Stale",
+              "Unknown"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "task": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "(?:Z|\\+00:00)$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_activity": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "session_id",
+          "agent_id",
+          "task",
+          "started_at",
+          "ended_at",
+          "last_activity"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgeRecord": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "proposed",
+              "active",
+              "verified",
+              "superseded",
+              "retracted"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "knowledge_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 12000
+          },
+          "source_event_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "knowledge_id",
+          "category",
+          "title",
+          "text",
+          "source_event_ids"
+        ],
+        "additionalProperties": false
+      },
+      "DecisionRecord": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "Proposed",
+              "Accepted",
+              "Rejected",
+              "Superseded"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "decision_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "decision"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "problem": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "alternatives": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "maxItems": 20
+          },
+          "choice": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "rationale": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "consequences": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1000
+            },
+            "maxItems": 20
+          },
+          "source_event_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "decision_id",
+          "category",
+          "title",
+          "problem",
+          "alternatives",
+          "choice",
+          "rationale",
+          "consequences",
+          "source_event_ids"
+        ],
+        "additionalProperties": false
+      },
+      "ArtifactReference": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "available",
+              "superseded",
+              "unavailable"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "artifact_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "uri": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 2000
+          },
+          "artifact_type": {
+            "enum": [
+              "implementation",
+              "test_report",
+              "simulation",
+              "build",
+              "document",
+              "other"
+            ]
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_event_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "artifact_id",
+          "title",
+          "uri",
+          "artifact_type",
+          "sha256",
+          "source_event_ids"
+        ],
+        "additionalProperties": false
+      },
+      "TestResult": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "Passed",
+              "Failed",
+              "Unknown",
+              "Skipped"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "test_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "runner": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "execution_status": {
+            "enum": [
+              "started",
+              "completed",
+              "unknown"
+            ]
+          },
+          "exit_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "source_event_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "maxItems": 30
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "test_id",
+          "name",
+          "runner",
+          "execution_status",
+          "exit_code",
+          "summary",
+          "source_event_ids"
+        ],
+        "additionalProperties": false
+      },
+      "AgentEvent": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "enum": [
+              "recorded",
+              "started",
+              "completed",
+              "failed",
+              "unknown"
+            ]
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "supersedes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provenance": {
+            "enum": [
+              "observed",
+              "agent_reported",
+              "derived"
+            ]
+          },
+          "event_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "event_type": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "knowledge": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KnowledgeRecord"
+            },
+            "maxItems": 8
+          },
+          "test_results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TestResult"
+            },
+            "maxItems": 8
+          },
+          "session": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AgentSession"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "project_context": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProjectContext"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "record_id",
+          "revision",
+          "supersedes",
+          "provenance",
+          "event_id",
+          "event_type",
+          "category",
+          "summary",
+          "knowledge",
+          "test_results"
+        ],
+        "additionalProperties": false
+      },
+      "CapabilityDescriptor": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "service": {
+            "const": "Chronicler"
+          },
+          "contract_version": {
+            "const": "1.0.0"
+          },
+          "supported_api_versions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "maxItems": 10
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "maxItems": 100
+          },
+          "memory_categories": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "maxItems": 20
+          },
+          "transports": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "maxItems": 10
+          },
+          "search_semantics": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "max_page_size": {
+            "type": "integer"
+          },
+          "max_response_bytes": {
+            "type": "integer"
+          },
+          "write_requires_idempotency_key": {
+            "const": true
+          },
+          "notion_required": {
+            "const": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "service",
+          "contract_version",
+          "supported_api_versions",
+          "operations",
+          "memory_categories",
+          "transports",
+          "search_semantics",
+          "max_page_size",
+          "max_response_bytes",
+          "write_requires_idempotency_key",
+          "notion_required"
+        ],
+        "additionalProperties": false
+      },
+      "ApiError": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "retryable": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "code",
+          "message",
+          "retryable"
+        ],
+        "additionalProperties": false
+      },
+      "list_projectsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "list_projectsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProjectContext"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_project_stateArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_project_stateResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ProjectContext"
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_project_historyArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_project_historyResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AgentEvent"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "list_sessionsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "list_sessionsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AgentSession"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_session_detailsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id",
+          "session_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_session_detailsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "$ref": "#/components/schemas/AgentSession"
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "search_knowledgeArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "query": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 256
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "additionalProperties": false
+      },
+      "search_knowledgeResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/KnowledgeRecord"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_decisionsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_decisionsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DecisionRecord"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_failuresArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "category": {
+            "enum": [
+              "architecture",
+              "game_design",
+              "implementation",
+              "experiment",
+              "decision",
+              "failure",
+              "discovery",
+              "testing",
+              "project_context"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_failuresResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/AgentEvent"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_artifactsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_artifactsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ArtifactReference"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_test_resultsArguments": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+            "maxLength": 256
+          },
+          "session_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "agent_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "until": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "cursor": {
+            "type": "string",
+            "maxLength": 3000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "max_response_bytes": {
+            "type": "integer",
+            "minimum": 8192,
+            "maximum": 131072
+          },
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "project_id"
+        ],
+        "additionalProperties": false
+      },
+      "get_test_resultsResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TestResult"
+                },
+                "maxItems": 100
+              },
+              "next_cursor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "snapshot": {
+                "type": "string",
+                "maxLength": 3000
+              }
+            },
+            "required": [
+              "items",
+              "next_cursor",
+              "has_more",
+              "snapshot"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "append_eventArguments": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/AgentEvent"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "record",
+          "idempotency_key"
+        ],
+        "additionalProperties": false
+      },
+      "append_eventResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "record_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              "revision": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "integer"
+              },
+              "accepted": {
+                "const": true
+              }
+            },
+            "required": [
+              "record_id",
+              "revision",
+              "sequence",
+              "accepted"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "register_decisionArguments": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/DecisionRecord"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "record",
+          "idempotency_key"
+        ],
+        "additionalProperties": false
+      },
+      "register_decisionResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "record_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              "revision": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "integer"
+              },
+              "accepted": {
+                "const": true
+              }
+            },
+            "required": [
+              "record_id",
+              "revision",
+              "sequence",
+              "accepted"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "register_artifactArguments": {
+        "type": "object",
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/ArtifactReference"
+          },
+          "idempotency_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [
+          "record",
+          "idempotency_key"
+        ],
+        "additionalProperties": false
+      },
+      "register_artifactResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "record_id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              "revision": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "integer"
+              },
+              "accepted": {
+                "const": true
+              }
+            },
+            "required": [
+              "record_id",
+              "revision",
+              "sequence",
+              "accepted"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "get_capabilitiesArguments": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "get_capabilitiesResponse": {
+        "$ref": "#/components/schemas/CapabilityDescriptor"
+      },
+      "RecordLookupResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "record_type": {
+                "enum": [
+                  "ProjectContext",
+                  "AgentSession",
+                  "AgentEvent",
+                  "DecisionRecord",
+                  "KnowledgeRecord",
+                  "ArtifactReference",
+                  "TestResult"
+                ]
+              },
+              "record": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ProjectContext"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AgentSession"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AgentEvent"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DecisionRecord"
+                  },
+                  {
+                    "$ref": "#/components/schemas/KnowledgeRecord"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ArtifactReference"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TestResult"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "record_type",
+              "record"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "QueuedWriteResponse": {
+        "type": "object",
+        "properties": {
+          "api_version": {
+            "const": "v1"
+          },
+          "request_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+            "maxLength": 256
+          },
+          "project_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "session_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "(?:Z|\\+00:00)$"
+          },
+          "status": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "artifact_refs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ArtifactLink"
+            },
+            "maxItems": 20
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceReference"
+            },
+            "maxItems": 30
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "operation": {
+                "enum": [
+                  "append_event",
+                  "register_decision",
+                  "register_artifact"
+                ]
+              },
+              "idempotency_key": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+                "maxLength": 256
+              },
+              "queued": {
+                "const": true
+              },
+              "accepted": {
+                "const": false
+              }
+            },
+            "required": [
+              "operation",
+              "idempotency_key",
+              "queued",
+              "accepted"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "api_version",
+          "request_id",
+          "project_id",
+          "timestamp",
+          "status",
+          "artifact_refs",
+          "evidence",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "list_projectsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/list_projectsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_project_stateToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_project_stateResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_project_historyToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_project_historyResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "list_sessionsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/list_sessionsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_session_detailsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_session_detailsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "search_knowledgeToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/search_knowledgeResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_decisionsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_decisionsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_failuresToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_failuresResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_artifactsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_artifactsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "get_test_resultsToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_test_resultsResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
+      },
+      "append_eventToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/append_eventResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          },
+          {
+            "$ref": "#/components/schemas/QueuedWriteResponse"
+          }
+        ]
+      },
+      "register_decisionToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/register_decisionResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          },
+          {
+            "$ref": "#/components/schemas/QueuedWriteResponse"
+          }
+        ]
+      },
+      "register_artifactToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/register_artifactResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          },
+          {
+            "$ref": "#/components/schemas/QueuedWriteResponse"
+          }
+        ]
+      },
+      "get_capabilitiesToolResult": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/get_capabilitiesResponse"
+          },
+          {
+            "$ref": "#/components/schemas/ApiError"
+          }
+        ]
       }
     },
     "securitySchemes": {

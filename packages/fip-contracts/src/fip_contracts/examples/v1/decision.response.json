@@ -1,0 +1,15 @@
+{
+  "api_version": "v1",
+  "request_id": "req-decision-fixed-tick-001",
+  "project_id": "world-forge-demo",
+  "timestamp": "2026-10-19T08:38:29.683525+00:00",
+  "status": "ok",
+  "artifact_refs": [],
+  "evidence": [],
+  "data": {
+    "record_id": "decision-fixed-tick-001",
+    "revision": 1,
+    "sequence": 4,
+    "accepted": true
+  }
+}

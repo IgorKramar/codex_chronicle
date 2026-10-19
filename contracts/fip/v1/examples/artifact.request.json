@@ -1,0 +1,35 @@
+{
+  "record": {
+    "api_version": "v1",
+    "request_id": "req-artifact-replay-001",
+    "project_id": "world-forge-demo",
+    "timestamp": "2026-10-19T10:00:00Z",
+    "status": "available",
+    "artifact_refs": [],
+    "evidence": [
+      {
+        "evidence_id": "ref:2e7aded4f1dc4efccba5c3bc",
+        "project_id": "world-forge-demo",
+        "kind": "event",
+        "target_id": "evt-simulation-001",
+        "uri": null,
+        "provenance": "agent_reported"
+      }
+    ],
+    "record_id": "artifact-replay-001",
+    "revision": 1,
+    "supersedes": null,
+    "provenance": "agent_reported",
+    "agent_id": "forge-planner",
+    "session_id": "forge-session-001",
+    "artifact_id": "replay-implementation",
+    "title": "Replay implementation and test report",
+    "uri": "https://example.org/world-forge/commits/demo",
+    "artifact_type": "implementation",
+    "sha256": null,
+    "source_event_ids": [
+      "evt-simulation-001"
+    ]
+  },
+  "idempotency_key": "example-artifact"
+}

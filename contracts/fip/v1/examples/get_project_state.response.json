@@ -1,0 +1,49 @@
+{
+  "api_version": "v1",
+  "request_id": "50c3b3d8-79c7-4ac2-bd35-33ba341ee2ac",
+  "project_id": "world-forge-demo",
+  "timestamp": "2026-10-19T08:38:29.690317+00:00",
+  "status": "ok",
+  "artifact_refs": [],
+  "evidence": [],
+  "data": {
+    "api_version": "v1",
+    "request_id": "e601bce9-0d31-4395-b0c1-360df8a6174b",
+    "project_id": "world-forge-demo",
+    "timestamp": "2026-10-19T10:00:00Z",
+    "status": "active",
+    "artifact_refs": [],
+    "evidence": [],
+    "record_id": "state:a601588419793891dd51e2ac16cb6f7e9a56a500",
+    "revision": 1,
+    "supersedes": null,
+    "provenance": "derived",
+    "agent_id": null,
+    "session_id": null,
+    "name": "WORLD FORGE Demo",
+    "description": "Synthetic deterministic combat prototype",
+    "current_goal": "Make combat replays reproducible",
+    "implemented": [
+      "Deterministic replay mechanic"
+    ],
+    "open_questions": [
+      "Replay verification"
+    ],
+    "llm_summary": "Проект: WORLD FORGE Demo\nSynthetic deterministic combat prototype\nЦель: Make combat replays reproducible\nAgentEvent [completed; agent_reported] Compare fixed and variable combat simulation ticks — source evt-design-001\nProjectContext [active; agent_reported]  — source context-game-001\nAgentEvent [recorded; agent_reported] Fixed combat tick — source 4ddac747-0b3b-58ef-8f49-60cec6859901\nDecisionRecord [Proposed; agent_reported] Fixed combat tick: Fixed tick; Deterministic replay — source decision-fixed-tick-001\nAgentEvent [completed; agent_reported] Synthetic example: 100 replay ticks matched — source evt-simulation-001\nKnowledgeRecord [active; agent_reported] Deterministic replay mechanic — source knowledge-replay-001\nTestResult [Passed; agent_reported] Synthetic example result — source test-replay-001\nAgentEvent [recorded; agent_reported] Replay implementation and test report — source ca7fd6b9-cb79-5410-b545-d006d7dce0bf\nArtifactReference [available; agent_reported] Replay implementation and test report https://example.org/world-forge/commits/demo — source artifact-replay-001",
+    "source_ids": [
+      "evt-design-001",
+      "context-game-001",
+      "4ddac747-0b3b-58ef-8f49-60cec6859901",
+      "decision-fixed-tick-001",
+      "evt-simulation-001",
+      "knowledge-replay-001",
+      "test-replay-001",
+      "ca7fd6b9-cb79-5410-b545-d006d7dce0bf",
+      "artifact-replay-001"
+    ],
+    "confidence": {
+      "label": "unknown",
+      "basis": "Проекция записей; уверенность автора не является статистической вероятностью."
+    }
+  }
+}

@@ -46,7 +46,10 @@ def main():
                 raise RuntimeError(redact(result.stderr.decode(errors="replace")[-2000:]))
             return result
 
-        run(["docker", "tag", "codex-chronicle:0.1.0", "chronicle-acceptance-collector"])
+        from chronicle import __version__
+
+        image = "codex-chronicle:" + __version__
+        run(["docker", "tag", image, "chronicle-acceptance-collector"])
         try:
             run(compose + ["config", "--quiet"])
             run(compose + ["up", "-d", "--no-build", "--wait", "postgres", "collector"])
@@ -69,7 +72,11 @@ for i in range(2):
 req=urllib.request.Request('http://127.0.0.1:8787/v1/projects/smoke-project/state',headers={'Authorization':'Bearer smoke-read-only-test'})
 state=json.load(opener.open(req))
 assert state['event_count']==1
-print(json.dumps({'container_ingestion':'passed','deduplication':'passed','read_api':'passed','events':1}))
+req=urllib.request.Request('http://127.0.0.1:8787/v1/capabilities',headers={'Authorization':'Bearer smoke-read-only-test'})
+assert json.load(opener.open(req))['notion_required'] is False
+req=urllib.request.Request('http://127.0.0.1:8787/v1/memory/projects/smoke-project/state',headers={'Authorization':'Bearer smoke-read-only-test'})
+assert json.load(opener.open(req))['data']['project_id']=='smoke-project'
+print(json.dumps({'container_ingestion':'passed','deduplication':'passed','read_api':'passed','fip_read_api':'passed','events':1}))
 """
             result = run(compose + ["exec", "-T", "collector", "python", "-"], input=code.encode())
             evidence = json.loads(result.stdout)
@@ -81,9 +88,11 @@ print(json.dumps({'container_ingestion':'passed','deduplication':'passed','read_
                 compose_backup="passed",
                 public_ports_opened=False,
                 caddy_started=False,
-                image="codex-chronicle:0.1.0",
+                image=image,
             )
-            Path("evidence/container-probe.json").write_text(json.dumps(evidence, indent=2) + "\n")
+            Path(
+                os.environ.get("CHRONICLE_PROBE_EVIDENCE", "evidence/container-probe.json")
+            ).write_text(json.dumps(evidence, indent=2) + "\n")
             print(json.dumps(evidence))
         except Exception as exc:
             from chronicle.privacy import redact

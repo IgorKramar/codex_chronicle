@@ -7,6 +7,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, Field
 
+from . import __version__
 from .auth import AuthRegistry
 from .events import now, validate_event
 from .state import build_state, period_summary, session_key
@@ -80,7 +81,7 @@ def create_app(location=None, grants=None, publisher_cfg=None):
 
     app = FastAPI(
         title="Codex Chronicle read and ingestion API",
-        version="0.1.0",
+        version=__version__,
         lifespan=lifespan,
         docs_url=None,
         redoc_url=None,

@@ -2,13 +2,13 @@
 
 Distributed Agent Journal & Shared Project Memory. Python 3.11+, локальный offline-журнал Codex, Collector и Notion Publisher.
 
-**Версия 0.1.0 — предварительный выпуск.** Локальные, распределённые и mock Notion проверки выполнены. Приёмка с двумя реальными Codex заблокирована авторизацией CLI в этой среде; real Notion, Windows/WSL и непрерывный 12h+ soak ещё не подтверждены. Не считать эту версию прошедшей все критерии stable.
+**Версия 0.2.0 — предварительный выпуск; FIP v1 contract 1.0.0.** Локальные, распределённые и mock Notion проверки выполнены. Приёмка с двумя реальными Codex заблокирована авторизацией CLI в этой среде; real Notion, Windows/WSL и непрерывный 12h+ soak ещё не подтверждены. Не считать эту версию прошедшей все критерии stable.
 
 ## Быстрый запуск
 
 ```bash
 python3 -m venv ~/.local/share/codex-chronicle/venv
-~/.local/share/codex-chronicle/venv/bin/pip install /path/to/codex_chronicle-0.1.0-py3-none-any.whl
+~/.local/share/codex-chronicle/venv/bin/pip install /path/to/codex_chronicle-0.2.0-py3-none-any.whl
 ~/.local/share/codex-chronicle/venv/bin/chronicle init
 ~/.local/share/codex-chronicle/venv/bin/chronicle install
 ```
@@ -27,6 +27,18 @@ chronicle report --project PROJECT_ID
 ```
 
 Добавьте путь к `chronicle` в PATH для интерактивного CLI. Hook использует абсолютный путь Python, поэтому не зависит от PATH вашей shell. В Windows используйте [install-windows.ps1](scripts/install-windows.ps1); WSL устанавливается отдельно внутри дистрибутива.
+
+## Открытый API для агентов
+
+Chronicler теперь предоставляет FIP v1: transport-independent MemoryService, authenticated REST API, официальный MCP stdio server и отдельный `fip-contracts` package. Notion не нужен для чтения/записи. Все 14 MCP operations имеют JSON Schema и HTTP mapping. Write operations используют durable client outbox, обязательные idempotency keys и immutable revisions. Search — lexical AND, без semantic search.
+
+- [API и контракт](docs/API.md)
+- [Подключение REST/MCP](docs/INTEGRATION.md)
+- [WORLD FORGE integration и проверенный cross-agent сценарий](docs/WORLD_FORGE_INTEGRATION.md)
+- [FIP schemas и примеры](contracts/fip/v1/README.md)
+- [Проверки нового API](evidence/FIP_VALIDATION.md)
+
+Новый API: `/v1/memory/...`, discovery: `/v1/capabilities`. Прежние маршруты и hooks/outbox сохранены. Для MCP установите extra `[mcp]`, настройте локальные credentials и запустите `chronicle mcp`; он не включается в Codex автоматически и не делает memory read обязательным.
 
 ## Что реализовано
 
