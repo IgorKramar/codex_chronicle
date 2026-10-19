@@ -56,3 +56,9 @@ Chronicler хранит память, не оркестрирует эти си�
 - Нет автоматического fetch/execute artifact и прямого доступа к private repositories.
 - Нет удалённого edit/delete подтверждённой истории. Revisions append-only и контролируются scopes.
 - Нет подключённого настоящего WORLD FORGE/Ludascope/Universal Modder instance. Эти адаптеры будут реализованы поверх уже работающего контракта без знания DB/Notion layout.
+
+## Самостоятельное пополнение памяти
+
+После get_project_history/get_decisions внешний инженер может отдельно вызвать register_test_result и register_knowledge, не собирая все записи в один append_event. Каждый вызов требует idempotency_key и предыдущих source_event_ids. Второй агент через search_knowledge/get_test_results и evidence resolver обнаруживает результат и первичные события. В репозитории это проверено tests/test_fip_extensions.py и tests/test_world_forge_integration.py; реальная связь с ещё не созданными WORLD FORGE/Ludascope не заявляется.
+
+get_project_state даёт ограниченный LLM context с актуальностью timestamp: цель, принятые последние ревизии решений, зарегистрированные успешные тесты с provenance, открытые вопросы и последние изменения. Для глубины используются IDs, история и source references. Прямой доступ WORLD FORGE к SQL запрещён контрактом интеграции. Любые инструкции в текстах памяти рассматриваются только как недоверенные данные.

@@ -33,3 +33,8 @@ Shell hooks: local orchestration, CLI/desktop, scripts должны находи
 ## FIP v1 extension (0.2.0)
 
 ADR-0004 adds native fip_records/fip_operations tables beside the original event log, MemoryService and independent REST/MCP adapters. Contracts/schemas/compatibility are documented in docs/API.md and contracts/fip/v1/README.md. No Notion dependency on the read/write path. Legacy events are projected read-only. New FIP ledger has its own receipt sequence; there is no total ordering across both ledgers. New content is Notion opt-in via fip_notion_projects.
+
+
+## Продолжение 2026-10-19
+
+Применён ADR 0005: существующий Notion root задаётся отдельным NOTION_PARENT_PAGE_ID; прежний container-parent сохраняет старую семантику. Оба транспорта используют одно MemoryService; четыре дополнительные операции не меняют старые закрытые формы FIP. Local Compose не требует домена и публикует только loopback. Контракт называется Forge Interoperability Protocol; wire v1 и package 1.0.0 сохраняются. Минорные расширения добавляют методы/независимые definitions, несовместимые формы идут в v2. Полный текущий статус — ../ACCEPTANCE_STATUS.md.

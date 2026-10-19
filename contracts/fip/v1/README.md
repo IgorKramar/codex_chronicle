@@ -1,4 +1,4 @@
-# FIP v1 — Forge Integration Protocol
+# FIP v1 — Forge Interoperability Protocol
 
 JSON Schema dialect: 2020-12. Contract version: 1.0.0. API version: `v1`.
 `fip.schema.json` is the canonical complete bundle, `$id=urn:fip:v1`. Named schema files reference that bundle. Resolve URNs through a local registry; do not fetch schemas from the Internet. The standalone `fip-contracts` wheel provides schemas, examples and validation helpers.

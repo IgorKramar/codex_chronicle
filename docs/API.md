@@ -103,3 +103,18 @@ Raw REST клиент должен иметь собственный durable out
 ApiError: stable code/message/retryable; 401 unauthorized, 403 forbidden, 404 unknown or inaccessible, 409 immutable/idempotency/revision conflict, 413 budget, 422 invalid schema/reference/test claim, 426 version mismatch, 503 transient unavailable. Внешние stack traces и secret values в ответ не включаются. После 409 получите актуальную entity history и создайте новую явно согласованную ревизию с новым key; не подменяйте старый запрос.
 
 V1 shapes frozen; новые optional поля/enum members тоже требуют v2 из-за strict validators. Новые methods/definitions — additive через get_capabilities. Compatibility checker и contract tests входят в CI. OpenAPI и schemas не означают, что все старые acceptance gaps исчезли: реальные Codex auth/Notion/Windows/WSL/12h soak остаются отдельной приёмкой.
+
+## Дополнительные операции
+
+| MCP | HTTP | Семантика |
+|---|---|---|
+| get_recent_activity | GET /v1/memory/activity | События по убыванию timestamp, затем record_id; snapshot pagination |
+| get_daily_summary | GET /v1/memory/summaries/daily | По умолчанию текущие UTC-сутки до snapshot.as_of; since/until задают период |
+| register_test_result | POST /v1/memory/test-results | TestResult + обязательный Idempotency-Key |
+| register_knowledge | POST /v1/memory/knowledge | KnowledgeRecord + обязательный Idempotency-Key |
+
+Всего 18 операций; read-only MCP показывает 13. Отдельные записи знаний/тестов транзакционно создают первичное событие регистрации. Проверки проекта, автора, evidence, ревизии, verify/decide и consistency теста совпадают с append_event. Auto-registration event имеет provenance agent_reported. Новые offline ACK используют ExtendedQueuedWriteResponse; первоначальный QueuedWriteResponse не изменён.
+
+Daily summary возвращает ограниченную страницу первичных событий, as_of, period_start/end, краткий русский текст и counts для **всей отфильтрованной snapshot-выборки**, а не только текущей страницы. `counts.events` не означает завершённые задачи; `failed_events` не означает число уникальных bugs. Для продолжения используется next_cursor. Detail-содержимое доступно по record_id через evidence resolver. Все обычные project/session/agent/time/status/category фильтры и grant boundaries действуют и для этих методов.
+
+Текущие модели не вводят статистическую вероятность или скрытые рассуждения. Для знания-гипотезы используется status=proposed и первичное событие с event_type=knowledge.hypothesis; рекомендация — knowledge.recommendation. Проверенный факт требует status=verified, evidence и verify scope; подтверждённое решение оформляется DecisionRecord со статусом Accepted и decide scope. При чтении явное обоснование автора остаётся agent_reported. Эти event_type — документированное соглашение, не классификатор произвольного текста. История создания/изменения определяется первой и последней timestamp ревизий одной entity; отдельные created_at/updated_at в существующую закрытую v1 форму не добавляются.

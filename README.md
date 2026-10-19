@@ -71,3 +71,11 @@ python -m venv .venv
 ```
 
 `requirements-*.lock` фиксируют зависимости проверенного окружения. Wheel локального агента не требует runtime-зависимостей. Сервер устанавливается с `[server]`. Проект не отправляет сообщения другим людям и не публикует данные без настроенной export policy.
+
+## Продолжение интеграции
+
+Основной репозиторий: [IgorKramar/codex_chronicle, ветка master](https://github.com/IgorKramar/codex_chronicle/tree/master). Старые исходники и история сохранены. [Текущая приёмка](ACCEPTANCE_STATUS.md) остаётся открытой.
+
+API теперь предоставляет 18 операций через REST/MCP, включая независимую регистрацию тестов и знаний, недавнюю активность и дневную сводку. Notion может использовать [уже созданный корень](https://app.notion.com/p/3fe99aa2eb7b815ba30ed0a315146484) без создания второго Observatory; [настройка отдельной интеграции](docs/NOTION_SETUP.md).
+
+Для локального MVP без домена: deploy/compose.local.yaml (API только 127.0.0.1). [Чистый clone, CI и выпуск](docs/RELEASE.md). [OpenAPI 3.1](openapi.yaml). Реальный E2E: scripts/live_e2e.py; длительная проверка: scripts/soak_test.py. Они не заменяются mock-тестами и не объявляют непроверенные шаги успешными.

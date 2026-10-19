@@ -128,3 +128,26 @@ Default endpoint https://localhost:8787 не открывает listener и не
 Notion optional. Для публикации новой FIP memory явно задайте CHRONICLE_NOTION_PROJECTS=project-a,project-b на Collector (или fip_notion_projects в standalone publisher config), дополнительно к обычной policy export. Default — не публиковать FIP. Current State/Development Journal/ADR имеют стабильные keys; полный контракт, тесты и artifact references доступны через API. Временная ошибка Notion не откатывает FIP transaction и не блокирует reads/writes.
 
 Backups PostgreSQL автоматически включают новые fip_records/fip_operations; pending external outbox находится на клиентской машине и резервируется отдельно. При restore не теряйте operations: они обеспечивают идемпотентность после потерянных ответов. Публичного удаления истории нет. Административные purge/retention legacy CLI не затрагивают FIP ledger; перед добавлением FIP retention нужна явная operator policy/backup, чтобы не скрыть подтверждённую историю. Новый ledger по умолчанию не удаляет записи автоматически.
+
+## Локальный Collector и готовая страница Notion
+
+Для установки без домена используйте `deploy/compose.local.yaml`. Он публикует API только на 127.0.0.1:8787; PostgreSQL остаётся во внутренней сети. Подготовьте private secrets directory с postgres_password, auth.json (provision.py) и notion_token (может быть пустым, если Notion выключен). Затем:
+
+```bash
+docker compose -f deploy/compose.local.yaml up -d --build
+```
+
+Не запускайте production compose с Caddy для локального MVP. Для loopback development HTTP клиентам требуется явный CHRONICLE_ALLOW_LOOPBACK_HTTP=1; удалённые подключения — только HTTPS. [Настройка dedicated Notion integration](NOTION_SETUP.md).
+
+Полный реальный сценарий после штатного входа Codex, установки плагина и разрешения hooks:
+
+```bash
+python scripts/diagnose_codex_auth.py
+python scripts/live_e2e.py --directory /private/chronicler/live-probe-NEW --run-live
+```
+
+Запуск использует два реальных Codex, сохраняет hooks, проверяет повторную доставку, регистрирует решение через HTTP, публикует и читает страницы Notion, читает память через настоящий MCP stdio и другого HTTP reader. Не подставляет mock при ошибке. Evidence находится в выбранной private directory; синтетические страницы оставляются для независимого чтения ChatGPT. Итог AwaitingChatGPTReadback не равен полной приёмке: прочитайте указанные URL через connector, зафиксируйте результат и затем удалите синтетические записи через chronicle purge --notion. Корень не удаляйте.
+
+Для Codex login status=success при реальном 401/451 выполните штатный `codex login` на своей машине, проверьте доступ к выбранной модели/организации и повторите probe. В managed среде ответ no_biscuit_no_service требует исправления attestation/маршрута владельцем среды; обходы не применяются. Диагностический JSON сохраняет только allowlisted признаки, без transcripts/tokens. Авторизация Codex не является авторизацией Collector или Notion.
+
+Реальный soak: `python scripts/soak_test.py --directory /private/chronicler/soak-NEW`. По умолчанию 43200 **реальных** секунд. Скрипт сохраняет очередь/базу, периодически останавливает и перезапускает loopback Collector, переоткрывает outbox, повторяет idempotent операции, проверяет итоговый счётчик и пишет resource samples. Короткие запуски отмечаются SmokePassed, не Passed. Измеряется ресурсное потребление runner, не полная телеметрия ОС/всех агентов. Notion намеренно отключён в этом standalone probe: 12h Notion acceptance требует отдельного этапа с dedicated token. Прерванный/удалённый cloud workspace не даёт основания считать soak пройденным.
