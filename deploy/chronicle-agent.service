@@ -1,0 +1,16 @@
+[Unit]
+Description=Codex Chronicle local worker
+After=network-online.target
+
+[Service]
+Type=simple
+# Replace /ABS/PATH using the output of command -v chronicle.
+ExecStart=/ABS/PATH/chronicle agent
+EnvironmentFile=-%h/.config/chronicle/agent.env
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+UMask=0077
+
+[Install]
+WantedBy=default.target

@@ -17,7 +17,9 @@ description: Save concise Russian project memory after a meaningful development 
    alternatives, choice, rationale, consequences; components и supersedes при наличии.
    Принятие решения должно быть явно подтверждено. Сохраняйте id при ревизии.
 4. Problem содержит id, type (Bug/Limitation/Discovery/Improvement/Research/Technical Debt),
-   title, status (Open/Resolved); decision_ids при наличии. Используйте существующий id.
+   title, status (Open/Resolved); decision_ids при наличии. Для Resolved укажите
+   resolves: массив Event IDs исходных Open records, которые закрывает проверенное исправление.
+   Без этих ссылок исходные проблемы остаются Open. Используйте существующий id.
 5. Evidence: Event ID / commit SHA / путь тестового отчёта + фактический результат.
    Агентское утверждение в Evidence остаётся agent_reported, пока не проверен источник.
 6. Выполните `chronicle memory --project PROJECT_ID --session SESSION_ID --file REPORT.json`.

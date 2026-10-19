@@ -1,3 +1,4 @@
+import re
 import subprocess
 import uuid
 from pathlib import Path
@@ -56,14 +57,30 @@ def discover(cwd, cfg):
     return pid, root, worktree
 
 
-def snapshot(root):
+def snapshot(root, previous_commit=None):
     # Names only, never git diff or environment/config contents.
-    files = git(root, "diff", "--name-only", "HEAD").splitlines()
+    files = git(root, "diff", "--no-ext-diff", "--no-textconv", "--name-only", "HEAD").splitlines()
+    commit = git(root, "rev-parse", "HEAD")
+    if (
+        previous_commit
+        and re.fullmatch(r"[a-fA-F0-9]{40,64}", previous_commit)
+        and previous_commit != commit
+    ):
+        files += git(
+            root,
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--name-only",
+            previous_commit,
+            commit,
+            "--",
+        ).splitlines()
     files += git(root, "ls-files", "--others", "--exclude-standard").splitlines()
     return redact(
         {
             "branch": git(root, "branch", "--show-current"),
-            "commit": git(root, "rev-parse", "HEAD"),
+            "commit": commit,
             "files": sorted({p for p in files if safe_path(p)})[:500],
         }
     )

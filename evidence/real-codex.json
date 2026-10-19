@@ -1,0 +1,50 @@
+{
+  "probe": "real_codex_cli",
+  "results": [
+    {
+      "index": 0,
+      "exit_code": 1,
+      "seconds": 5.41,
+      "file_created": false,
+      "stream_event_types": [
+        "error",
+        "item.completed",
+        "thread.started",
+        "turn.failed",
+        "turn.started"
+      ],
+      "stderr_categories": {
+        "hook_failure": false,
+        "authentication_error": true
+      },
+      "observed_events": 0,
+      "kinds": [],
+      "projects": [],
+      "sessions": [],
+      "auto_worker_health": false
+    },
+    {
+      "index": 1,
+      "exit_code": 1,
+      "seconds": 1.5,
+      "file_created": false,
+      "stream_event_types": [
+        "error",
+        "item.completed",
+        "thread.started",
+        "turn.failed",
+        "turn.started"
+      ],
+      "stderr_categories": {
+        "hook_failure": false,
+        "authentication_error": true
+      },
+      "observed_events": 0,
+      "kinds": [],
+      "projects": [],
+      "sessions": [],
+      "auto_worker_health": false
+    }
+  ],
+  "note": "Real CLI hooks only; external Notion acceptance is separate."
+}

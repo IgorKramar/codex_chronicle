@@ -1,0 +1,8 @@
+{
+  "postgres_backup_restore": "passed",
+  "events_restored": 1,
+  "uncertain_write_fence_restored": true,
+  "replay_deduplicated": true,
+  "backup_bytes": 5267,
+  "backup_sha256": "87e1f8ddb3d1c7c3f300a9bfadd01d60a6fd325d3298a16cef0b841e8e7eb567"
+}

@@ -1,0 +1,10 @@
+include README.md CHANGELOG.md CHATGPT_INTEGRATION.md requirements-*.lock
+recursive-include docs *.md *.json
+recursive-include plugin *.json *.py *.md
+recursive-include scripts *.py *.sh *.ps1
+recursive-include deploy *
+recursive-include tests *.py
+recursive-include evidence *.md *.json *.xml
+recursive-include src/chronicle/assets *
+
+recursive-include .github *.yml

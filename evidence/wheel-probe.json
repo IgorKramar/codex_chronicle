@@ -1,0 +1,7 @@
+{
+  "wheel": "codex_chronicle-0.1.0-py3-none-any.whl",
+  "clean_venv_install": "passed",
+  "core_dependencies": 0,
+  "bundled_manifests_and_skill": true,
+  "init_prepare_status_doctor": "passed"
+}

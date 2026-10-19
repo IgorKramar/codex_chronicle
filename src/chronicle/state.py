@@ -101,6 +101,20 @@ def build_state(events, stale_seconds=1800, clock=None):
             identity = item.get("id")
             if identity:
                 target.setdefault(identity, []).append(item)
+    issue_states = {}
+    for iid, revisions in current_issues.items():
+        closed_sources = {
+            ref for r in revisions if r["status"] == "Resolved" for ref in r.get("resolves", [])
+        }
+        unresolved = [
+            r["source_event"]
+            for r in revisions
+            if r["status"] == "Open" and r["source_event"] not in closed_sources
+        ]
+        issue_states[iid] = {
+            "status": "Open" if unresolved else "Resolved",
+            "unresolved_sources": unresolved,
+        }
     latest = reports[-1] if reports else {}
     latest_by_session = {r["session_key"]: r for r in reports}
     conflicts = {}
@@ -119,6 +133,7 @@ def build_state(events, stale_seconds=1800, clock=None):
         "reports": reports,
         "decisions": current_decisions,
         "issues": current_issues,
+        "issue_states": issue_states,
         "tool_results": tests,
         "changed_files": sorted(files),
         "event_count": len(events),

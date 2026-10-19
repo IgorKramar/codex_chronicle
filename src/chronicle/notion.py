@@ -475,7 +475,7 @@ class Publisher:
                         "Project ID": pid,
                         "Issue ID": iid,
                         "Type": issue["type"],
-                        "Status": issue["status"],
+                        "Status": state["issue_states"][iid]["status"],
                         "Source ID": issue["source_event"],
                         "Decisions": issue.get("decision_ids", []),
                     },

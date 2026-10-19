@@ -1,0 +1,91 @@
+import json
+import time
+
+import pytest
+from conftest import event, serve
+from mock_notion import MockNotion
+
+from chronicle.agent import Agent
+from chronicle.memory import record
+from chronicle.notion import COLLECTIONS, Publisher, UncertainWrite
+from chronicle.transport import TransportError
+
+
+def publisher(cfg, store, url):
+    cfg.update(notion_parent="parent", allow_loopback_http=True)
+    return Publisher(store, cfg, "test-notion", url + "/v1", interval=0)
+
+
+def test_full_notion_projection_and_idempotence(cfg, report):
+    a = Agent(cfg)
+    cfg["projects"]["p1"] = {"name": "Первый", "remote": "git.example/one", "policy": "export"}
+    a.store.append([event(cfg), event(cfg, "Stop", turn_id="t1")])
+    record(a.store, cfg, "p1", "s1", report)
+    mock = MockNotion()
+    with serve(mock.app) as url:
+        p = publisher(cfg, a.store, url)
+        assert p.publish()["projects"] == 1
+        assert set(p.sources) == set(COLLECTIONS)
+        count = len(mock.pages)
+        stable = a.store.get_meta("notion:page:project:p1")["id"]
+        p.publish()
+        assert len(mock.pages) == count
+        assert a.store.get_meta("notion:page:project:p1")["id"] == stable
+        # New observed event updates stable state, does not create another project.
+        a.store.append([event(cfg, "Interrupt", turn_id="t1")])
+        p.publish()
+        assert a.store.get_meta("notion:page:project:p1")["id"] == stable
+    rows = [p for p in mock.pages.values() if "Chronicle Key" in p["properties"]]
+    assert any("Unknown" in json.dumps(row, ensure_ascii=False) for row in rows)
+    assert all("prompt" not in json.dumps(row) for row in rows)
+
+
+def test_ambiguous_create_reconciles_after_restart(cfg):
+    a = Agent(cfg)
+    mock = MockNotion()
+    mock.fail_after_create = True
+    with serve(mock.app) as url:
+        p = publisher(cfg, a.store, url)
+        with pytest.raises(TransportError):
+            p.ensure_root()
+        assert len(mock.pages) == 1
+        p = publisher(cfg, a.store, url)
+        p.ensure_root()
+        assert len(mock.pages) == 1
+        assert len(mock.databases) == 7
+
+
+def test_uncertain_absent_never_blindly_recreates(cfg):
+    a = Agent(cfg)
+    a.store.set_meta("notion:uncertain:root:parent", True)
+    mock = MockNotion()
+    with serve(mock.app) as url:
+        with pytest.raises(UncertainWrite):
+            publisher(cfg, a.store, url).ensure_root()
+    assert not mock.pages
+
+
+def test_notion_retry_after_is_persistent(cfg):
+    a = Agent(cfg)
+    mock = MockNotion()
+    mock.rate_limit = True
+    with serve(mock.app) as url:
+        p = publisher(cfg, a.store, url)
+        with pytest.raises(TransportError) as exc:
+            p.ensure_root()
+        assert exc.value.retry_after == 120
+        assert a.store.get_meta("notion:retry_at") > time.time() + 110
+        before = len(mock.calls)
+        with pytest.raises(TransportError):
+            publisher(cfg, a.store, url).ensure_root()
+        assert len(mock.calls) == before
+
+
+def test_local_project_is_not_published(cfg):
+    a = Agent(cfg)
+    cfg["projects"]["p1"] = {"name": "private", "remote": "", "policy": "local"}
+    a.store.append([event(cfg)])
+    mock = MockNotion()
+    with serve(mock.app) as url:
+        assert publisher(cfg, a.store, url).publish()["projects"] == 0
+    assert len(mock.pages) == 1  # empty observatory only; no project data

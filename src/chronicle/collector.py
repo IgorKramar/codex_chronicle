@@ -165,8 +165,10 @@ def create_app(location=None, grants=None, publisher_cfg=None):
 
     @app.get("/v1/projects/{project_id}/issues", operation_id="get_open_issues", tags=["memory"])
     def get_open_issues(project_id: str, grant=Depends(reader)):
-        histories = build_state(events_for(grant, project_id))["issues"]
-        return {k: v for k, v in histories.items() if v[-1]["status"] != "Resolved"}
+        state = build_state(events_for(grant, project_id))
+        return {
+            k: v for k, v in state["issues"].items() if state["issue_states"][k]["status"] == "Open"
+        }
 
     @app.get("/v1/summaries/daily", operation_id="get_daily_summary", tags=["memory"])
     def get_daily_summary(date: str, grant=Depends(reader)):

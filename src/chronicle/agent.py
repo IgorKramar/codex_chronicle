@@ -44,8 +44,10 @@ class Agent:
                 )
                 # Metadata gathering runs only in worker, never in the hook critical path.
                 if e["kind"] in {"SessionStart", "Stop", "PreCompact", "SessionEnd"}:
-                    e["payload"].update(snapshot(root))
+                    e["payload"].update(snapshot(root, self.store.get_meta("commit:" + worktree)))
                 self.store.append([e])
+                if e["payload"].get("commit"):
+                    self.store.set_meta("commit:" + worktree, e["payload"]["commit"])
                 self.store.set_meta("cwd:" + worktree, str(root))
                 path.unlink()
                 count += 1
@@ -139,7 +141,14 @@ class Agent:
                 evidence="derived",
                 payload={"source_idle_seconds": round(idle)},
             )
+            cwd = self.store.get_meta("cwd:" + e["worktree_id"])
+            if cwd:
+                e["payload"].update(
+                    snapshot(cwd, self.store.get_meta("commit:" + e["worktree_id"]))
+                )
             self.store.append([validate_event(e)])
+            if e["payload"].get("commit"):
+                self.store.set_meta("commit:" + e["worktree_id"], e["payload"]["commit"])
             self.store.set_meta(marker, time.time())
 
     def run(self, once=False):

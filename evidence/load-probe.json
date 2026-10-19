@@ -1,0 +1,15 @@
+{
+  "events": 25000,
+  "replayed_deliveries": 25000,
+  "computers": 8,
+  "simulated_history_hours": 13,
+  "wall_clock_soak_hours": 0,
+  "insert_and_replay_seconds": 3.698,
+  "projection_seconds": 0.221,
+  "hook_capture_ms_p50": 0.101,
+  "hook_capture_ms_p95": 0.213,
+  "hook_process_ms_p50": 33.072,
+  "hook_process_ms_p95": 39.988,
+  "sqlite_bytes": 22814720,
+  "note": "No real 13h soak; subprocess timing includes interpreter startup. No relative Codex throughput claim."
+}

@@ -1,0 +1,6 @@
+{$CHRONICLE_DOMAIN} {
+    request_body {
+        max_size 1MB
+    }
+    reverse_proxy collector:8787
+}

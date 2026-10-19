@@ -1,0 +1,11 @@
+{
+  "container_ingestion": "passed",
+  "deduplication": "passed",
+  "read_api": "passed",
+  "events": 1,
+  "compose_config": "passed",
+  "compose_backup": "passed",
+  "public_ports_opened": false,
+  "caddy_started": false,
+  "image": "codex-chronicle:0.1.0"
+}
