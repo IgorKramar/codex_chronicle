@@ -13,6 +13,10 @@ from .fip_client import FipClient
 from .memory_service import WRITE_TYPES, ApiFault, error_response
 
 DESCRIPTIONS = {
+    "get_recent_activity": "Read recent events newest first, with snapshot pagination and scope filters.",
+    "get_daily_summary": "Read bounded UTC daily event summary with counts, source events and pagination; counts are not completed tasks.",
+    "register_test_result": "Append a test result revision with evidence; Passed requires completed execution and exit code zero.",
+    "register_knowledge": "Append a knowledge revision with primary sources; verified requires verify scope.",
     "list_projects": "List authorized projects with compact context; paginated.",
     "get_project_state": "Get source-backed project context and a bounded LLM summary.",
     "get_project_history": "Read immutable project events with category, author, session and time filters.",

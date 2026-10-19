@@ -21,10 +21,14 @@ WRITE_TYPES = {
     "append_event": "AgentEvent",
     "register_decision": "DecisionRecord",
     "register_artifact": "ArtifactReference",
+    "register_test_result": "TestResult",
+    "register_knowledge": "KnowledgeRecord",
 }
 READ_TYPES = {
     "list_projects": "ProjectContext",
     "get_project_history": "AgentEvent",
+    "get_recent_activity": "AgentEvent",
+    "get_daily_summary": "AgentEvent",
     "list_sessions": "AgentSession",
     "search_knowledge": "KnowledgeRecord",
     "get_decisions": "DecisionRecord",
@@ -562,6 +566,21 @@ class MemoryService:
                     * direction
                     >= 0
                 ]
+        if operation == "get_daily_summary":
+            as_of = dt.datetime.fromisoformat(snapshot["at"])
+            start_time = (
+                dt.datetime.fromisoformat(args["since"])
+                if "since" in args
+                else as_of.replace(hour=0, minute=0, second=0, microsecond=0)
+            )
+            end_time = dt.datetime.fromisoformat(args["until"]) if "until" in args else as_of
+            items = [
+                r
+                for r in items
+                if start_time <= dt.datetime.fromisoformat(r["timestamp"]) <= end_time
+            ]
+        if operation in {"get_recent_activity", "get_daily_summary"}:
+            items.sort(key=lambda r: (r["timestamp"], r["record_id"]), reverse=True)
         if operation == "get_failures":
             items = [r for r in items if r["category"] == "failure" or r["status"] == "failed"]
         if operation == "search_knowledge":
@@ -607,7 +626,7 @@ class MemoryService:
         def encoded(s):
             return base64.urlsafe_b64encode(json.dumps(s, sort_keys=True).encode()).decode()
 
-        return dict(
+        response = dict(
             result,
             data={
                 "items": chosen,
@@ -616,6 +635,23 @@ class MemoryService:
                 "snapshot": encoded(snapshot),
             },
         )
+
+        if operation == "get_daily_summary":
+            counts = {
+                "events": len(items),
+                "failed_events": sum(
+                    r["status"] == "failed" or r["category"] == "failure" for r in items
+                ),
+                "agents": len({r.get("agent_id") for r in items if r.get("agent_id")}),
+            }
+            response["data"].update(
+                as_of=snapshot["at"],
+                period_start=start_time.isoformat(),
+                period_end=end_time.isoformat(),
+                counts=counts,
+                summary=f"Событий за период: {counts['events']}; событий ошибок: {counts['failed_events']}; агентов: {counts['agents']}. Записи и их evidence содержат первичные источники; число событий не означает число завершённых задач.",
+            )
+        return response
 
     def _uri(self, uri):
         parsed = urlsplit(uri)
@@ -695,8 +731,12 @@ class MemoryService:
                 ),
                 "event_id": eid,
                 "event_type": operation,
-                "category": "decision" if kind == "DecisionRecord" else "implementation",
-                "summary": record["title"],
+                "category": "decision"
+                if kind == "DecisionRecord"
+                else "testing"
+                if kind == "TestResult"
+                else record.get("category", "implementation"),
+                "summary": record.get("title", record.get("name", operation)),
                 "knowledge": [],
                 "test_results": [],
                 "evidence": record["evidence"],

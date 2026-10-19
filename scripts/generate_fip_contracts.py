@@ -269,6 +269,8 @@ READS = {
     "list_projects": ("ProjectContext", []),
     "get_project_state": ("ProjectContext", ["project_id"]),
     "get_project_history": ("AgentEvent", ["project_id"]),
+    "get_recent_activity": ("AgentEvent", []),
+    "get_daily_summary": ("AgentEvent", []),
     "list_sessions": ("AgentSession", []),
     "get_session_details": ("AgentSession", ["project_id", "session_id"]),
     "search_knowledge": ("KnowledgeRecord", ["query"]),
@@ -281,6 +283,8 @@ WRITES = {
     "append_event": "AgentEvent",
     "register_decision": "DecisionRecord",
     "register_artifact": "ArtifactReference",
+    "register_test_result": "TestResult",
+    "register_knowledge": "KnowledgeRecord",
 }
 for op, (item, required) in READS.items():
     allowed = set(filters) - {"query"}
@@ -315,6 +319,24 @@ for op, (item, required) in READS.items():
     )
     if op in {"get_project_state", "get_session_details"}:
         data = ref(item)
+    if op == "get_daily_summary":
+        data["properties"].update(
+            {
+                "as_of": utc,
+                "period_start": utc,
+                "period_end": utc,
+                "summary": string(12000),
+                "counts": obj(
+                    {
+                        "events": {"type": "integer"},
+                        "failed_events": {"type": "integer"},
+                        "agents": {"type": "integer"},
+                    },
+                    ["events", "failed_events", "agents"],
+                ),
+            }
+        )
+        data["required"] += ["as_of", "period_start", "period_end", "summary", "counts"]
     defs[op + "Response"] = obj({**common, "data": data}, required_common + ["data"])
 for op, item in WRITES.items():
     defs[op + "Arguments"] = obj(
@@ -378,7 +400,7 @@ defs["QueuedWriteResponse"] = obj(
         **common,
         "data": obj(
             {
-                "operation": {"enum": list(WRITES)},
+                "operation": {"enum": ["append_event", "register_decision", "register_artifact"]},
                 "idempotency_key": identifier,
                 "queued": {"const": True},
                 "accepted": {"const": False},
@@ -388,10 +410,25 @@ defs["QueuedWriteResponse"] = obj(
     },
     required_common + ["data"],
 )
+defs["ExtendedQueuedWriteResponse"] = copy.deepcopy(defs["QueuedWriteResponse"])
+defs["ExtendedQueuedWriteResponse"]["properties"]["data"]["properties"]["operation"]["enum"] = list(
+    WRITES
+)
+# The original closed queue response remains compatible with existing strict clients.
 for op in [*READS, *WRITES, "get_capabilities"]:
     defs[op + "ToolResult"] = {
         "anyOf": [ref(op + "Response"), ref("ApiError")]
-        + ([ref("QueuedWriteResponse")] if op in WRITES else [])
+        + (
+            [
+                ref(
+                    "ExtendedQueuedWriteResponse"
+                    if op in {"register_knowledge", "register_test_result"}
+                    else "QueuedWriteResponse"
+                )
+            ]
+            if op in WRITES
+            else []
+        )
     }
 project_identifier = {"type": "string", "pattern": r"^[A-Za-z0-9_.:@-]{1,256}$", "maxLength": 256}
 for definition in defs.values():

@@ -97,7 +97,7 @@ def test_mcp_real_stdio_sdk_roundtrip_and_write_then_other_reader(tmp_path):
                     init = await session.initialize()
                     assert init.serverInfo.name == "chronicler-fip-v1"
                     tools = await session.list_tools()
-                    assert len(tools.tools) == 14
+                    assert len(tools.tools) == 18
                     caps = await session.call_tool("get_capabilities", {})
                     assert not caps.isError
                     validate("CapabilityDescriptor", caps.structuredContent)
@@ -122,7 +122,7 @@ def test_mcp_real_stdio_sdk_roundtrip_and_write_then_other_reader(tmp_path):
                 async with ClientSession(read, write) as session:
                     await session.initialize()
                     tools = await session.list_tools()
-                    assert len(tools.tools) == 11
+                    assert len(tools.tools) == 13
                     assert "append_event" not in {t.name for t in tools.tools}
                     denial = await session.call_tool(
                         "append_event", {"record": e, "idempotency_key": "denied"}

@@ -115,7 +115,12 @@ class FipClient:
                 "accepted": False,
             },
         }
-        return validate("QueuedWriteResponse", queued)
+        return validate(
+            "ExtendedQueuedWriteResponse"
+            if operation in {"register_knowledge", "register_test_result"}
+            else "QueuedWriteResponse",
+            queued,
+        )
 
     def _deliver(self, identity, force=False):
         with self.store.connect() as c:

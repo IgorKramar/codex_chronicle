@@ -1976,6 +1976,428 @@
       ],
       "additionalProperties": false
     },
+    "get_recent_activityArguments": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "category": {
+          "enum": [
+            "architecture",
+            "game_design",
+            "implementation",
+            "experiment",
+            "decision",
+            "failure",
+            "discovery",
+            "testing",
+            "project_context"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "since": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "until": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 3000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "max_response_bytes": {
+          "type": "integer",
+          "minimum": 8192,
+          "maximum": 131072
+        },
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "get_recent_activityResponse": {
+      "type": "object",
+      "properties": {
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/ArtifactLink"
+          },
+          "maxItems": 20
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/EvidenceReference"
+          },
+          "maxItems": 30
+        },
+        "confidence": {
+          "$ref": "urn:fip:v1#/$defs/Confidence"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:fip:v1#/$defs/AgentEvent"
+              },
+              "maxItems": 100
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "snapshot": {
+              "type": "string",
+              "maxLength": 3000
+            }
+          },
+          "required": [
+            "items",
+            "next_cursor",
+            "has_more",
+            "snapshot"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api_version",
+        "request_id",
+        "project_id",
+        "timestamp",
+        "status",
+        "artifact_refs",
+        "evidence",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "get_daily_summaryArguments": {
+      "type": "object",
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+          "maxLength": 256
+        },
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "category": {
+          "enum": [
+            "architecture",
+            "game_design",
+            "implementation",
+            "experiment",
+            "decision",
+            "failure",
+            "discovery",
+            "testing",
+            "project_context"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "since": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "until": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "cursor": {
+          "type": "string",
+          "maxLength": 3000
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "max_response_bytes": {
+          "type": "integer",
+          "minimum": 8192,
+          "maximum": 131072
+        },
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "get_daily_summaryResponse": {
+      "type": "object",
+      "properties": {
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/ArtifactLink"
+          },
+          "maxItems": 20
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/EvidenceReference"
+          },
+          "maxItems": 30
+        },
+        "confidence": {
+          "$ref": "urn:fip:v1#/$defs/Confidence"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:fip:v1#/$defs/AgentEvent"
+              },
+              "maxItems": 100
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "snapshot": {
+              "type": "string",
+              "maxLength": 3000
+            },
+            "as_of": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            },
+            "period_start": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            },
+            "period_end": {
+              "type": "string",
+              "format": "date-time",
+              "pattern": "(?:Z|\\+00:00)$"
+            },
+            "summary": {
+              "type": "string",
+              "maxLength": 12000
+            },
+            "counts": {
+              "type": "object",
+              "properties": {
+                "events": {
+                  "type": "integer"
+                },
+                "failed_events": {
+                  "type": "integer"
+                },
+                "agents": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "events",
+                "failed_events",
+                "agents"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "items",
+            "next_cursor",
+            "has_more",
+            "snapshot",
+            "as_of",
+            "period_start",
+            "period_end",
+            "summary",
+            "counts"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api_version",
+        "request_id",
+        "project_id",
+        "timestamp",
+        "status",
+        "artifact_refs",
+        "evidence",
+        "data"
+      ],
+      "additionalProperties": false
+    },
     "list_sessionsArguments": {
       "type": "object",
       "properties": {
@@ -3603,6 +4025,266 @@
       ],
       "additionalProperties": false
     },
+    "register_test_resultArguments": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "$ref": "urn:fip:v1#/$defs/TestResult"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "record",
+        "idempotency_key"
+      ],
+      "additionalProperties": false
+    },
+    "register_test_resultResponse": {
+      "type": "object",
+      "properties": {
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/ArtifactLink"
+          },
+          "maxItems": 20
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/EvidenceReference"
+          },
+          "maxItems": 30
+        },
+        "confidence": {
+          "$ref": "urn:fip:v1#/$defs/Confidence"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "revision": {
+              "type": "integer"
+            },
+            "sequence": {
+              "type": "integer"
+            },
+            "accepted": {
+              "const": true
+            }
+          },
+          "required": [
+            "record_id",
+            "revision",
+            "sequence",
+            "accepted"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api_version",
+        "request_id",
+        "project_id",
+        "timestamp",
+        "status",
+        "artifact_refs",
+        "evidence",
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "register_knowledgeArguments": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "$ref": "urn:fip:v1#/$defs/KnowledgeRecord"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        }
+      },
+      "required": [
+        "record",
+        "idempotency_key"
+      ],
+      "additionalProperties": false
+    },
+    "register_knowledgeResponse": {
+      "type": "object",
+      "properties": {
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/ArtifactLink"
+          },
+          "maxItems": 20
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/EvidenceReference"
+          },
+          "maxItems": 30
+        },
+        "confidence": {
+          "$ref": "urn:fip:v1#/$defs/Confidence"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "record_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "revision": {
+              "type": "integer"
+            },
+            "sequence": {
+              "type": "integer"
+            },
+            "accepted": {
+              "const": true
+            }
+          },
+          "required": [
+            "record_id",
+            "revision",
+            "sequence",
+            "accepted"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api_version",
+        "request_id",
+        "project_id",
+        "timestamp",
+        "status",
+        "artifact_refs",
+        "evidence",
+        "data"
+      ],
+      "additionalProperties": false
+    },
     "get_capabilitiesArguments": {
       "type": "object",
       "properties": {
@@ -3869,6 +4551,124 @@
       ],
       "additionalProperties": false
     },
+    "ExtendedQueuedWriteResponse": {
+      "type": "object",
+      "properties": {
+        "api_version": {
+          "const": "v1"
+        },
+        "request_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+          "maxLength": 256
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(?:Z|\\+00:00)$"
+        },
+        "status": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "artifact_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/ArtifactLink"
+          },
+          "maxItems": 20
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "urn:fip:v1#/$defs/EvidenceReference"
+          },
+          "maxItems": 30
+        },
+        "confidence": {
+          "$ref": "urn:fip:v1#/$defs/Confidence"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "operation": {
+              "enum": [
+                "append_event",
+                "register_decision",
+                "register_artifact",
+                "register_test_result",
+                "register_knowledge"
+              ]
+            },
+            "idempotency_key": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:@/-]{1,256}$",
+              "maxLength": 256
+            },
+            "queued": {
+              "const": true
+            },
+            "accepted": {
+              "const": false
+            }
+          },
+          "required": [
+            "operation",
+            "idempotency_key",
+            "queued",
+            "accepted"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "api_version",
+        "request_id",
+        "project_id",
+        "timestamp",
+        "status",
+        "artifact_refs",
+        "evidence",
+        "data"
+      ],
+      "additionalProperties": false
+    },
     "list_projectsToolResult": {
       "anyOf": [
         {
@@ -3893,6 +4693,26 @@
       "anyOf": [
         {
           "$ref": "urn:fip:v1#/$defs/get_project_historyResponse"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ApiError"
+        }
+      ]
+    },
+    "get_recent_activityToolResult": {
+      "anyOf": [
+        {
+          "$ref": "urn:fip:v1#/$defs/get_recent_activityResponse"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ApiError"
+        }
+      ]
+    },
+    "get_daily_summaryToolResult": {
+      "anyOf": [
+        {
+          "$ref": "urn:fip:v1#/$defs/get_daily_summaryResponse"
         },
         {
           "$ref": "urn:fip:v1#/$defs/ApiError"
@@ -4005,6 +4825,32 @@
         },
         {
           "$ref": "urn:fip:v1#/$defs/QueuedWriteResponse"
+        }
+      ]
+    },
+    "register_test_resultToolResult": {
+      "anyOf": [
+        {
+          "$ref": "urn:fip:v1#/$defs/register_test_resultResponse"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ApiError"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ExtendedQueuedWriteResponse"
+        }
+      ]
+    },
+    "register_knowledgeToolResult": {
+      "anyOf": [
+        {
+          "$ref": "urn:fip:v1#/$defs/register_knowledgeResponse"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ApiError"
+        },
+        {
+          "$ref": "urn:fip:v1#/$defs/ExtendedQueuedWriteResponse"
         }
       ]
     },

@@ -32,7 +32,7 @@ def test_all_schemas_and_mcp_inputs_are_valid():
     for op in OPERATIONS:
         Draft202012Validator.check_schema(embedded(op + "Arguments"))
         Draft202012Validator.check_schema(embedded(op + "ToolResult"))
-    assert len(OPERATIONS) == 14
+    assert len(OPERATIONS) == 18
 
 
 def test_schema_source_package_and_runtime_do_not_drift():
