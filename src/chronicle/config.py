@@ -98,7 +98,7 @@ class ProcessLock:
             else:
                 import fcntl
 
-                fcntl.flock(self.f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                cast(Any, fcntl).flock(self.f, cast(Any, fcntl).LOCK_EX | cast(Any, fcntl).LOCK_NB)
         except OSError:
             self.f.close()
             raise RuntimeError("Chronicle worker уже запущен") from None

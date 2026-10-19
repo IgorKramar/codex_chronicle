@@ -1,0 +1,66 @@
+{
+  "recorded_at": "2026-10-19T09:50:34.840994+00:00",
+  "notion": {
+    "root_page_id": "3fe99aa2-eb7b-815b-a30e-d0a315146484",
+    "connector_read": "passed; startup sections confirmed; no modifications made",
+    "dedicated_integration": "not configured",
+    "live_e2e": "Blocked before writes"
+  },
+  "official_docs_rechecked": {
+    "https://developers.openai.com/plugins/build/plugins": 200,
+    "https://learn.chatgpt.com/docs/hooks": 200,
+    "https://developers.notion.com/reference/versioning": 200,
+    "notion_pinned_version": "2026-03-11; official current examples confirm"
+  },
+  "pytest": {
+    "passed": 83,
+    "skipped": 1,
+    "live_notion_skipped": true,
+    "postgresql": "real PostgreSQL 17 container; concurrency and restart idempotency"
+  },
+  "quality": {
+    "ruff": "passed",
+    "format": "passed",
+    "mypy": "25 source files, check_untyped_defs=true, passed Linux",
+    "dependency_audit": {
+      "known_vulnerabilities": 0,
+      "dependencies": 69
+    },
+    "core_build": "passed",
+    "contracts_build": "passed"
+  },
+  "github": {
+    "repository": "https://github.com/IgorKramar/codex_chronicle",
+    "branch": "master",
+    "published_checkpoint": "c195cfa8586aac1e2e21079315b12ddddd570248",
+    "git_push": "failed: Invalid username or token",
+    "publication": "official Git Data API, exact tree and commit SHA verified; fast-forward only",
+    "ci_round1": "Windows runtime failures identified, fixed in f1e823b",
+    "ci_round2": "Ubuntu 3.11/3.12 and audit passed; Windows mypy fcntl platform typing failed, fixed subsequently",
+    "stable_release": false
+  },
+  "soak_snapshot": {
+    "cpu_seconds": 1.39,
+    "elapsed_seconds": 601.514,
+    "generated_events": 11,
+    "notion": "not tested; dedicated credential absent",
+    "outage_queue_checks": 1,
+    "peak_rss_platform_units": 34380,
+    "qualifies_for_12h": true,
+    "restarts": 1,
+    "samples": 11,
+    "started_at": "2026-10-19T09:40:18.549074+00:00",
+    "status": "Running",
+    "target_seconds": 43200,
+    "updated_at": "2026-10-19T09:50:20.062696+00:00"
+  },
+  "soak_status": "Running, not completed; standalone without Notion",
+  "limitations": [
+    "Real Codex exec unauthorized (401/451 attestation failure); safe diagnostic retained",
+    "Dedicated Notion integration required for live E2E and ChatGPT readback",
+    "WSL and real Windows Codex installation pending",
+    "Production not deployed; local loopback mode available",
+    "No semantic search",
+    "FIP assertion kinds represented by explicit source event convention; no inferred classifier"
+  ]
+}

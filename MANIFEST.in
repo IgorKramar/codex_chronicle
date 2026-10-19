@@ -1,4 +1,4 @@
-include README.md CHANGELOG.md CHATGPT_INTEGRATION.md requirements-*.lock
+include README.md CHANGELOG.md CHATGPT_INTEGRATION.md ACCEPTANCE_STATUS.md openapi.yaml requirements-*.lock
 recursive-include docs *.md *.json
 recursive-include plugin *.json *.py *.md
 recursive-include scripts *.py *.sh *.ps1
