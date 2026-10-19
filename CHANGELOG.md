@@ -2,6 +2,7 @@
 
 ## Unreleased — integration completion
 
+- Исправлено обнаружение локальных hooks в CLI 0.163.0: установщик использует совместимый manifest вместо portable manifest. Добавлена регрессионная проверка; подтверждены реальные события в SQLite и автозапуск worker в новой сессии после доверия через `/hooks`.
 - Expanded REST/MCP to 18 operations: recent activity, daily summaries, independent test and knowledge registration. Existing FIP v1 shapes remain compatible.
 - Reused the existing Notion Observatory root, added dedicated-token file setup/read preflight, and prevented live tests from archiving the user root.
 - Added private loopback Docker Compose, strict body type checking, dependency audit CI and real-clock soak/live integration runners.

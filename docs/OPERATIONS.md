@@ -24,6 +24,8 @@ systemctl --user enable --now chronicle-agent
 
 `chronicle agent --once` выполняет один цикл. Постоянный foreground: `chronicle agent`.
 
+Локальный установщик использует `.codex-plugin/plugin.json`: Codex 0.163.0 пропускает hooks portable-пакетов с корневым `plugin.json`. После обновления выполните `chronicle install`, откройте `/hooks` в Codex и проверьте/разрешите только hooks `codex-chronicle@chronicle-local`. Затем начните новую сессию: `SessionStart` должен автоматически запустить worker. Само наличие установленного плагина и отсутствие `hook-error.json` не доказывают вызов hooks.
+
 ## Конфигурация
 
 `CHRONICLE_HOME` — отдельный каталог конфигурации/данных (default ~/.chronicle). Идентификатор машины создаётся один раз: не копируйте computer_id между компьютерами. Конфигурация `config.json` не содержит ключей; атомарная запись защищена revision/OS lock. Для ручного редактирования остановите worker, измените JSON локально и запустите worker снова.

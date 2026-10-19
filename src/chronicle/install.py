@@ -19,6 +19,8 @@ def prepare_marketplace(cfg):
     if target.exists():
         shutil.rmtree(target)
     shutil.copytree(bundle_path(), target)
+    # Codex 0.163 skips hooks in portable manifests; use the bundled legacy manifest.
+    (target / "plugin.json").unlink(missing_ok=True)
     command = '"' + sys.executable + '" -m chronicle.hook'
     definitions = {
         e: [
