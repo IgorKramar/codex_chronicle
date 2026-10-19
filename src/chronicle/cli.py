@@ -63,6 +63,12 @@ def parser():
     x.add_argument("--notion", action="store_true")
     x = s.add_parser("notion")
     x.add_argument("--parent")
+    x.add_argument("--root", help="Reuse an existing Observatory page, without creating a root")
+    x.add_argument(
+        "--check",
+        action="store_true",
+        help="Check dedicated integration read access without writes",
+    )
     x.add_argument("--publish", action="store_true")
     x = s.add_parser("config")
     x.add_argument("--collector-url")
@@ -273,9 +279,27 @@ def main(argv=None):
             save(cfg)
             output({"saved": True})
         elif cmd == "notion":
+            if a.root:
+                cfg["notion_parent"] = a.root
+                cfg["notion_existing_root"] = True
+                save(cfg)
             if a.parent:
+                cfg["notion_existing_root"] = False
                 cfg["notion_parent"] = a.parent
                 save(cfg)
+            if a.check:
+                from .notion import Publisher
+
+                publisher = Publisher(agent.store, cfg)
+                page = publisher.call("GET", "/pages/" + cfg["notion_parent"])
+                output(
+                    {
+                        "read_access": True,
+                        "page_id": page["id"],
+                        "write_access": "not tested",
+                        "existing_root": cfg.get("notion_existing_root", False),
+                    }
+                )
             if a.publish:
                 from .notion import publish_store
 

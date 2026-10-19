@@ -1,0 +1,20 @@
+{
+  "login_status_exit_code": 0,
+  "login_reports_chatgpt": true,
+  "exit_code": 1,
+  "http_statuses": [
+    "401",
+    "451"
+  ],
+  "unauthorized": true,
+  "expired": false,
+  "refresh_token_reused": false,
+  "workspace_attestation_missing": true,
+  "hook_trust_required": false,
+  "event_types": [
+    "error",
+    "thread.started",
+    "turn.failed",
+    "turn.started"
+  ]
+}

@@ -14,9 +14,12 @@ from chronicle.notion import Publisher
     os.environ.get("CHRONICLE_LIVE_NOTION") != "1", reason="Live Notion opt-in not configured"
 )
 def test_real_notion_create_update_read_cleanup(cfg):
-    assert os.environ.get("NOTION_TOKEN") and os.environ.get("NOTION_PARENT")
+    assert (os.environ.get("NOTION_TOKEN") or os.environ.get("NOTION_TOKEN_FILE")) and (
+        os.environ.get("NOTION_PARENT_PAGE_ID") or os.environ.get("NOTION_PARENT")
+    )
     pid = str(uuid.uuid4())
-    cfg["notion_parent"] = os.environ["NOTION_PARENT"]
+    cfg["notion_parent"] = os.environ.get("NOTION_PARENT_PAGE_ID") or os.environ["NOTION_PARENT"]
+    cfg["notion_existing_root"] = bool(os.environ.get("NOTION_PARENT_PAGE_ID"))
     cfg["projects"][pid] = {
         "name": "Chronicle synthetic acceptance probe",
         "remote": "",
@@ -35,5 +38,9 @@ def test_real_notion_create_update_read_cleanup(cfg):
         assert agent.store.get_meta("notion:page:project:" + pid)["id"] == saved["id"]
     finally:
         root = agent.store.get_meta("notion:root")
-        if root:
+        if root and not cfg.get("notion_existing_root"):
             publisher.call("PATCH", "/pages/" + root, {"in_trash": True})
+        elif cfg.get("notion_existing_root"):
+            from chronicle.notion import purge_project
+
+            purge_project(agent.store, cfg, pid)

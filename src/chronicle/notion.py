@@ -137,6 +137,8 @@ class Publisher:
         self.store, self.cfg = store, cfg
         self.base = base_url.rstrip("/")
         self.token = token or os.environ.get("NOTION_TOKEN")
+        if not self.token and os.environ.get("NOTION_TOKEN_FILE"):
+            self.token = Path(os.environ["NOTION_TOKEN_FILE"]).read_text().strip()
         if not self.token:
             raise RuntimeError("NOTION_TOKEN required; configure locally, never in chat")
         self.interval, self.last = interval, 0
@@ -216,15 +218,29 @@ class Publisher:
                 raise RuntimeError("Duplicate Chronicle roots; resolve explicitly")
             return matches[0] if matches else None
 
-        root = self.create_once(
-            "root:" + parent,
-            find,
-            "/pages",
-            {
-                "parent": {"type": "page_id", "page_id": parent},
-                "properties": {"title": prop("title", title)},
-            },
-        )
+        if self.cfg.get("notion_existing_root"):
+            # Explicit root mode never creates or edits the supplied user's page.
+            root = self.call("GET", "/pages/" + parent)
+            if root.get("in_trash") or root.get("archived"):
+                raise RuntimeError("Configured Notion root is archived")
+            actual_title = "".join(
+                t.get("plain_text", t.get("text", {}).get("content", ""))
+                for prop in root.get("properties", {}).values()
+                if prop.get("type") == "title" or "title" in prop
+                for t in prop.get("title", [])
+            )
+            if actual_title != title:
+                raise RuntimeError("Configured page is not the Chronicle Observatory root")
+        else:
+            root = self.create_once(
+                "root:" + parent,
+                find,
+                "/pages",
+                {
+                    "parent": {"type": "page_id", "page_id": parent},
+                    "properties": {"title": prop("title", title)},
+                },
+            )
         self.root_id = root["id"]
         self.store.set_meta("notion:root", self.root_id)
         for name, fields in COLLECTIONS.items():

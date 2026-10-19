@@ -101,6 +101,8 @@ class MockNotion:
                     self.fail_after_create = False
                     return JSONResponse({"code": "service_unavailable"}, status_code=503)
                 return page
+            if parts[0] == "pages" and request.method == "GET":
+                return self.pages[parts[1]]
             if parts[0] == "pages" and request.method == "PATCH":
                 page = self.pages[parts[1]]
                 page["properties"].update(body.get("properties", {}))

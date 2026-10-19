@@ -112,3 +112,27 @@ def test_fip_projection_requires_opt_in_and_preserves_stable_state(cfg):
         assert p.publish()["projects"] == 1
         assert a.store.get_meta("notion:page:project:game-one")["id"] == before
         assert "WORLD FORGE" in json.dumps(mock.pages)
+
+
+def test_existing_observatory_preserves_user_content(cfg):
+    from chronicle.notion import prop
+
+    a = Agent(cfg)
+    mock = MockNotion()
+    root = "3fe99aa2-eb7b-815b-a30e-d0a315146484"
+    mock.pages[root] = {
+        "id": root,
+        "properties": {"title": prop("title", "CODEX CHRONICLE — Development Observatory")},
+    }
+    original = {"id": "user-heading", "type": "heading_2", "heading_2": {"rich_text": []}}
+    mock.blocks[root] = [original]
+    cfg.update(notion_parent=root, notion_existing_root=True, allow_loopback_http=True)
+    with serve(mock.app) as url:
+        p = Publisher(a.store, cfg, "test-notion", url + "/v1", interval=0)
+        p.ensure_root()
+        p.ensure_root()
+    assert p.root_id == root
+    assert len(mock.pages) == 1
+    assert len(mock.databases) == 7
+    assert mock.blocks[root][0] == original
+    assert not any(method == "PATCH" and path == "pages/" + root for method, path, _ in mock.calls)

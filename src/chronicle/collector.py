@@ -25,9 +25,12 @@ def create_app(location=None, grants=None, publisher_cfg=None):
     if grants is None and not auth_file:
         raise RuntimeError("CHRONICLE_AUTH_FILE is required; no default credentials")
     registry = AuthRegistry(grants=grants, path=auth_file)
-    if not publisher_cfg and os.environ.get("NOTION_PARENT"):
+    if not publisher_cfg and (
+        os.environ.get("NOTION_PARENT_PAGE_ID") or os.environ.get("NOTION_PARENT")
+    ):
         publisher_cfg = {
-            "notion_parent": os.environ["NOTION_PARENT"],
+            "notion_parent": os.environ.get("NOTION_PARENT_PAGE_ID") or os.environ["NOTION_PARENT"],
+            "notion_existing_root": bool(os.environ.get("NOTION_PARENT_PAGE_ID")),
             "home": os.environ.get("CHRONICLE_STATE_DIR", "/data"),
             "publish_seconds": int(os.environ.get("CHRONICLE_PUBLISH_SECONDS", "600")),
             "fip_notion_projects": [
