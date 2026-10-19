@@ -17,9 +17,49 @@ from chronicle.hook import capture
 from chronicle.memory import record, validate_report
 from chronicle.privacy import redact
 from chronicle.projects import canonical_remote, discover
-from chronicle.state import build_state, period_summary
+from chronicle.state import build_state, latest_test_results, period_summary, render_state
 from chronicle.store import ConflictError, Store
 from chronicle.transport import require_https
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_current_state_uses_latest_fip_result_and_retains_provenance(reverse):
+    older = {
+        "project_id": "p1",
+        "revision": 1,
+        "agent_id": "reader",
+        "test_id": "check",
+        "record_id": "older-result",
+        "name": "check.py",
+        "status": "Passed",
+        "provenance": "agent_reported",
+        "execution_status": "completed",
+        "exit_code": 0,
+    }
+    latest = dict(
+        older,
+        agent_id="reviser",
+        revision=2,
+        record_id="latest-result",
+        status="Failed",
+        exit_code=1,
+    )
+    state = build_state([])
+    records = [older, latest]
+    text = render_state(state, fip_tests=records[::-1] if reverse else records)
+    assert "Тесты: agent_reported: Failed — 1" in text
+    assert "older-result" not in text
+    assert "Failed [agent_reported; FIP]" in text
+    assert "latest-result" in text
+    assert "Тестовые результаты не зарегистрированы" in render_state(state)
+
+
+def test_latest_test_results_keeps_same_test_id_in_different_projects():
+    records = [
+        {"project_id": "p1", "test_id": "check", "revision": 1},
+        {"project_id": "p2", "test_id": "check", "revision": 2},
+    ]
+    assert list(latest_test_results(records)) == records
 
 
 @pytest.mark.parametrize(

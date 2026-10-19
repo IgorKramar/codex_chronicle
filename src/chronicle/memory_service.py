@@ -15,7 +15,7 @@ from .contracts import CATEGORIES, OPERATIONS, validate
 from .events import fingerprint, now
 from .fip_store import Ledger
 from .privacy import redact
-from .state import build_state, json_text
+from .state import build_state, json_text, latest_test_results
 from .store import ConflictError
 
 WRITE_TYPES = {
@@ -417,10 +417,13 @@ class MemoryService:
         if not selected and not old:
             raise ApiFault("not_found", "Project or record not found", 404)
         name = own["name"] if own else old[0]["project"]["name"] if old else pid
+        current_tests = list(latest_test_results(r for kind, r in selected if kind == "TestResult"))
+        current_test_ids = {r["record_id"] for r in current_tests}
         recent = [
             (kind, r)
             for kind, r in selected
             if not r["record_id"].startswith(("derived:", "failure:"))
+            and (kind != "TestResult" or r["record_id"] in current_test_ids)
         ][-20:]
         lines = [
             "Проект: " + name,
@@ -430,8 +433,7 @@ class MemoryService:
             lines += [own["description"], "Цель: " + own["current_goal"]]
         latest_decisions = {r["decision_id"]: r for kind, r in selected if kind == "DecisionRecord"}
         accepted = [r for r in latest_decisions.values() if r["status"] == "Accepted"][-5:]
-        latest_tests = {r["test_id"]: r for kind, r in selected if kind == "TestResult"}
-        confirmed_tests = [r for r in latest_tests.values() if r["status"] == "Passed"][-5:]
+        confirmed_tests = [r for r in current_tests if r["status"] == "Passed"][-5:]
         if accepted:
             lines.append("Принятые решения (последние ревизии):")
             for r in accepted:

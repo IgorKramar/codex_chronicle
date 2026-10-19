@@ -78,6 +78,8 @@ def build_state(events, stale_seconds=1800, clock=None):
                     "exit_code": p["exit_code"],
                     "test_status": p.get("test_status", "Unknown"),
                     "test_runner": p.get("test_runner"),
+                    "evidence": e["evidence"],
+                    "execution_status": p.get("execution_status", "unknown"),
                 }
             )
         if e["kind"] == "MemoryReport":
@@ -155,25 +157,68 @@ def build_state(events, stale_seconds=1800, clock=None):
     }
 
 
-def render_state(state):
+def latest_test_results(tests):
+    return {
+        (t["project_id"], t["test_id"]): t for t in sorted(tests, key=lambda t: t["revision"])
+    }.values()
+
+
+def render_state(state, fip_context=None, fip_tests=()):
     r = state["latest_report"]
+    context = fip_context or {}
+    tests = [
+        {
+            "name": t["test_runner"],
+            "status": t["test_status"],
+            "provenance": t["evidence"],
+            "source": t["event_id"],
+            "channel": "legacy",
+            "execution_status": t["execution_status"],
+            "exit_code": t["exit_code"],
+            "source_event_ids": [t["event_id"]],
+        }
+        for t in state["tool_results"]
+        if t["test_runner"]
+    ]
+    tests += [dict(t, source=t["record_id"], channel="FIP") for t in latest_test_results(fip_tests)]
+    counts = Counter((t["provenance"], t["status"]) for t in tests)
+    test_summary = (
+        "; ".join(
+            f"{provenance}: {status} — {count}"
+            for (provenance, status), count in sorted(counts.items())
+        )
+        or "Тестовые результаты не зарегистрированы ни в legacy, ни в FIP."
+    )
+    test_details = [
+        f"- {t['name']} — {t['status']} [{t['provenance']}; {t['channel']}]; "
+        f"execution={t['execution_status']}, exit_code={t['exit_code']}; "
+        f"источник: {t['source']}; evidence: {json_text(t.get('source_event_ids', []))}"
+        for t in tests
+    ]
+    updated_at = max(
+        state["updated_at"],
+        context.get("timestamp", state["updated_at"]),
+        key=dt.datetime.fromisoformat,
+    )
     lines = [
-        "# Current State — " + state["project"].get("name", "Unknown"),
-        "Обновлено: " + state["updated_at"],
-        "Наблюдаемых событий: " + str(state["event_count"]),
+        "# Current State — " + state["project"].get("name", context.get("name", "Unknown")),
+        "Обновлено: " + updated_at,
+        "\n## Кратко",
+        "Тесты: " + test_summary,
+        "Статус теста относится к одному запуску; agent_reported — отчёт, observed — наблюдение.",
+        "Событий legacy: " + str(state["event_count"]),
         "Статусы сессий: " + json_text(dict(Counter(s["status"] for s in state["sessions"]))),
     ]
     sections = [
         ("Что представляет собой проект", state["project"]),
-        ("Текущая цель разработки", r.get("Task", "Не зафиксирована")),
+        ("Текущая цель разработки", r.get("Task", context.get("current_goal", "Не зафиксирована"))),
         (
             "Что реализовано — по отчётам агентов",
             [v.get("Changes", []) for v in state["latest_reports_by_session"].values()],
         ),
         (
-            "Что подтверждено тестами",
-            [t for t in state["tool_results"] if t["test_status"] == "Passed"]
-            or "Нет подтверждённых завершённых test runs",
+            "Тесты и подробности по источникам",
+            "\n".join(test_details) or test_summary,
         ),
         (
             "Что находится в работе",
@@ -188,7 +233,7 @@ def render_state(state):
             "Что осталось сделать",
             [v.get("Next Steps", []) for v in state["latest_reports_by_session"].values()],
         ),
-        ("Когда обновлено", state["updated_at"]),
+        ("Когда обновлено", updated_at),
         (
             "Подтверждающие источники",
             {
@@ -202,6 +247,8 @@ def render_state(state):
     ]
     for label, content in sections:
         lines += ["\n## " + label, json_text(content)]
+    if context:
+        lines += ["\n## Подробности FIP и источники", context["llm_summary"]]
     lines += [
         "\nКонфликты решений: " + json_text(state["decision_conflicts"]),
         "Отчёты и обоснования: agent_reported; первичные наблюдения: observed. "
