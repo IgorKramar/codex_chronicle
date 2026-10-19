@@ -17,9 +17,30 @@ from chronicle.hook import capture
 from chronicle.memory import record, validate_report
 from chronicle.privacy import redact
 from chronicle.projects import canonical_remote, discover
-from chronicle.state import build_state, period_summary
+from chronicle.state import build_state, period_summary, render_state
 from chronicle.store import ConflictError, Store
 from chronicle.transport import require_https
+
+
+def test_current_state_uses_latest_fip_result_and_retains_provenance():
+    older = {
+        "agent_id": "reader",
+        "test_id": "check",
+        "record_id": "older-result",
+        "name": "check.py",
+        "status": "Passed",
+        "provenance": "agent_reported",
+        "execution_status": "completed",
+        "exit_code": 0,
+    }
+    latest = dict(older, record_id="latest-result", status="Failed", exit_code=1)
+    state = build_state([])
+    text = render_state(state, fip_tests=[older, latest])
+    assert "Тесты: agent_reported: Failed — 1" in text
+    assert "older-result" not in text
+    assert "Failed [agent_reported; FIP]" in text
+    assert "latest-result" in text
+    assert "Тестовые результаты не зарегистрированы" in render_state(state)
 
 
 @pytest.mark.parametrize(

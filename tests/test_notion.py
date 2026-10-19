@@ -91,6 +91,56 @@ def test_local_project_is_not_published(cfg):
     assert len(mock.pages) == 1  # empty observatory only; no project data
 
 
+@pytest.mark.parametrize("with_legacy", [True, False])
+@pytest.mark.parametrize("status", ["Passed", "Failed", "Unknown"])
+def test_current_state_unifies_test_sources_without_promoting_claims(cfg, with_legacy, status):
+    from fip_helpers import event as external_event
+    from fip_helpers import grant, test_result
+
+    from chronicle.memory_service import MemoryService
+
+    a = Agent(cfg)
+    cfg["projects"]["game-one"] = {"name": "Synthetic", "remote": "", "policy": "export"}
+    cfg["fip_notion_projects"] = ["game-one"]
+    if with_legacy:
+        legacy = event(cfg, "PostToolUse", project="game-one")
+        legacy["payload"].update(
+            test_runner="pytest", test_status="Passed", execution_status="completed", exit_code=0
+        )
+        a.store.append([legacy])
+    memory = MemoryService(a.store)
+    source = external_event()
+    memory.execute("append_event", {"record": source, "idempotency_key": "source"}, grant())
+    result = test_result(
+        source["record_id"],
+        status=status,
+        execution="started" if status == "Unknown" else "completed",
+        code=None if status == "Unknown" else int(status == "Failed"),
+    )
+    memory.execute("register_test_result", {"record": result, "idempotency_key": "test"}, grant())
+    mock = MockNotion()
+    with serve(mock.app) as url:
+        p = publisher(cfg, a.store, url)
+        p.publish()
+        page = a.store.get_meta("notion:page:project:game-one")["id"]
+        count = len(mock.pages)
+        p.publish()
+        assert a.store.get_meta("notion:page:project:game-one")["id"] == page
+        assert len(mock.pages) == count
+    content = "\n".join(
+        t["text"]["content"]
+        for b in mock.blocks[page]
+        for t in b.get("paragraph", {}).get("rich_text", [])
+    )
+    assert "## Кратко" in content
+    assert f"{status} [agent_reported; FIP]" in content
+    assert result["record_id"] in content
+    assert "Нет подтверждённых завершённых test runs" not in content
+    if with_legacy:
+        assert "Passed [observed; legacy]" in content
+        assert legacy["event_id"] in content
+
+
 def test_fip_projection_requires_opt_in_and_preserves_stable_state(cfg):
     from fip_helpers import event as external_event
     from fip_helpers import grant

@@ -414,11 +414,15 @@ class Publisher:
                 "Errors": sum(r["exit_code"] != 0 for r in state["tool_results"]),
                 "Open Tasks": state["latest_report"].get("Next Steps", []),
             }
-            content = render_state(state)
-            if pid in fip_contexts:
-                content = (
-                    "## FIP v1 agent memory\n" + fip_contexts[pid]["llm_summary"] + "\n\n" + content
-                )
+            content = render_state(
+                state,
+                fip_contexts.get(pid),
+                [
+                    r["body"]
+                    for r in fip_rows
+                    if r["kind"] == "TestResult" and r["body"]["project_id"] == pid
+                ],
+            )
             current = self.upsert("Projects", "project:" + pid, project["name"], content, values)
             if not values["Current State"]:
                 self.call(
@@ -536,6 +540,8 @@ class Publisher:
         for pid, context in fip_contexts.items():
             project_rows = [r for r in fip_rows if r["body"]["project_id"] == pid]
             if pid not in grouped:
+                state = build_state([])
+                state["updated_at"] = context["timestamp"]
                 old = self.store.get_meta("notion:page:project:" + pid, {})
                 values = {
                     "Project ID": pid,
@@ -553,7 +559,15 @@ class Publisher:
                     "Open Tasks": context["open_questions"],
                 }
                 current = self.upsert(
-                    "Projects", "project:" + pid, context["name"], context["llm_summary"], values
+                    "Projects",
+                    "project:" + pid,
+                    context["name"],
+                    render_state(
+                        state,
+                        context,
+                        [r["body"] for r in project_rows if r["kind"] == "TestResult"],
+                    ),
+                    values,
                 )
                 if not old.get("url"):
                     self.call(
