@@ -63,3 +63,26 @@ def test_independent_agent_registers_and_discovers_memory(tmp_path):
             ).status_code
             == 200
         )
+
+
+def test_daily_summary_counts_primary_events_not_failure_projections(tmp_path):
+    app = create_app(tmp_path / "collector.db", grants=[grant()])
+    with TestClient(app) as client:
+        headers = {"Authorization": "Bearer agent-a", "Idempotency-Key": "source"}
+        source = event()
+        assert client.post("/v1/memory/events", json=source, headers=headers).status_code == 200
+        failed = result_record(source["event_id"], status="Failed", code=1)
+        headers["Idempotency-Key"] = "failed-result"
+        assert (
+            client.post("/v1/memory/test-results", json=failed, headers=headers).status_code == 200
+        )
+        summary = client.get("/v1/memory/summaries/daily", headers=headers).json()
+        assert summary["data"]["counts"]["events"] == 2
+        assert all(not e["record_id"].startswith("failure:") for e in summary["data"]["items"])
+        invalid = client.get(
+            "/v1/memory/summaries/daily",
+            headers=headers,
+            params={"since": "2026-10-20T00:00:00Z", "until": "2026-10-19T00:00:00Z"},
+        )
+        assert invalid.status_code == 422
+        assert invalid.json()["code"] == "invalid_time_range"

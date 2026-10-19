@@ -1,6 +1,6 @@
 # Выпуск и воспроизведение
 
-Источник: https://github.com/IgorKramar/codex_chronicle. Основная рабочая ветка текущей разработки — `master`; исходная `main` сохранена. До смены default branch владельцем клонируйте явно:
+Источник: https://github.com/IgorKramar/codex_chronicle. Основная рабочая ветка текущей разработки — `master`; исходная `main` сохранена. Для выбора рабочей ветки клонируйте явно (default main также может быть безопасно продвинут до опубликованной версии):
 
 ```bash
 git clone --branch master https://github.com/IgorKramar/codex_chronicle.git

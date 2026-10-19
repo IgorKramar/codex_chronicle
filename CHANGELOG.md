@@ -29,3 +29,8 @@
 - Added Linux/Windows installation paths, Docker Compose/Caddy, dependency locks, backup/restore and operator documentation.
 - Validated synthetic distributed E2E, PostgreSQL concurrency, backup/restore, mock Notion, Docker and 25k-event accelerated history.
 - Real Codex acceptance blocked by CLI authorization; live Notion, Windows/WSL and wall-clock 12h+ soak remain pending. No stable release or production deployment claimed.
+
+### Additional validation fixes
+
+- Daily activity summaries count primary events, excluding derived failure projections; inverted time windows are rejected.
+- Windows platform-only lock types are checked without requiring fcntl/msvcrt stubs from the other OS.

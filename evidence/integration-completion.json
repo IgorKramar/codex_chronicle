@@ -1,5 +1,5 @@
 {
-  "recorded_at": "2026-10-19T09:50:34.840994+00:00",
+  "recorded_at": "2026-10-19T09:54:28.339152+00:00",
   "notion": {
     "root_page_id": "3fe99aa2-eb7b-815b-a30e-d0a315146484",
     "connector_read": "passed; startup sections confirmed; no modifications made",
@@ -13,7 +13,7 @@
     "notion_pinned_version": "2026-03-11; official current examples confirm"
   },
   "pytest": {
-    "passed": 83,
+    "passed": 84,
     "skipped": 1,
     "live_notion_skipped": true,
     "postgresql": "real PostgreSQL 17 container; concurrency and restart idempotency"
@@ -27,7 +27,9 @@
       "dependencies": 69
     },
     "core_build": "passed",
-    "contracts_build": "passed"
+    "contracts_build": "passed",
+    "container_probe": "updated ingest/dedup/read/backup passed, no public ports",
+    "clean_venv": "core and standalone contracts wheels passed"
   },
   "github": {
     "repository": "https://github.com/IgorKramar/codex_chronicle",
@@ -37,22 +39,35 @@
     "publication": "official Git Data API, exact tree and commit SHA verified; fast-forward only",
     "ci_round1": "Windows runtime failures identified, fixed in f1e823b",
     "ci_round2": "Ubuntu 3.11/3.12 and audit passed; Windows mypy fcntl platform typing failed, fixed subsequently",
-    "stable_release": false
+    "stable_release": false,
+    "ci_round3": {
+      "url": "https://github.com/IgorKramar/codex_chronicle/actions/runs/39233105561",
+      "head_sha": "98b388ff7a15228beb7b0c7c05422d216f9e4e20",
+      "conclusion": "success",
+      "jobs": [
+        "Ubuntu 3.11",
+        "Ubuntu 3.12",
+        "Windows 3.11",
+        "Windows 3.12",
+        "PostgreSQL integration",
+        "dependency security"
+      ]
+    }
   },
   "soak_snapshot": {
-    "cpu_seconds": 1.39,
-    "elapsed_seconds": 601.514,
-    "generated_events": 11,
+    "cpu_seconds": 1.45,
+    "elapsed_seconds": 841.607,
+    "generated_events": 15,
     "notion": "not tested; dedicated credential absent",
     "outage_queue_checks": 1,
     "peak_rss_platform_units": 34380,
     "qualifies_for_12h": true,
     "restarts": 1,
-    "samples": 11,
+    "samples": 15,
     "started_at": "2026-10-19T09:40:18.549074+00:00",
     "status": "Running",
     "target_seconds": 43200,
-    "updated_at": "2026-10-19T09:50:20.062696+00:00"
+    "updated_at": "2026-10-19T09:54:20.156012+00:00"
   },
   "soak_status": "Running, not completed; standalone without Notion",
   "limitations": [

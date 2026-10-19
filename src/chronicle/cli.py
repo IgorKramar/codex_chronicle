@@ -185,7 +185,11 @@ def main(argv=None):
                     "local_store": agent.store.stats(),
                     "hook_error": (home() / "hook-error.json").exists(),
                     "write_token_configured": bool(os.environ.get("CHRONICLE_WRITE_TOKEN")),
-                    "notion_token_configured": bool(os.environ.get("NOTION_TOKEN")),
+                    "notion_token_configured": bool(
+                        os.environ.get("NOTION_TOKEN")
+                        or os.environ.get("NOTION_TOKEN_FILE")
+                        or cfg.get("notion_token_file")
+                    ),
                     "hooks_trust": "Проверьте доверие в Codex; установка не даёт доверия автоматически",
                     "worker_health": json.loads(
                         (home() / "agent-health.json").read_text(encoding="utf-8")

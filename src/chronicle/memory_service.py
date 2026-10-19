@@ -243,6 +243,12 @@ class MemoryService:
             raise ApiFault("invalid_request", "Request does not match FIP v1 schema") from None
         if operation == "get_capabilities":
             return self.capabilities(grant, args)
+        if (
+            "since" in args
+            and "until" in args
+            and dt.datetime.fromisoformat(args["since"]) > dt.datetime.fromisoformat(args["until"])
+        ):
+            raise ApiFault("invalid_time_range", "since must not be later than until")
         write = operation in WRITE_TYPES
         if ("write" if write else "read") not in grant.get("scopes", []):
             raise ApiFault("forbidden", "Required scope not granted", 403)
@@ -424,9 +430,8 @@ class MemoryService:
             lines += [own["description"], "Цель: " + own["current_goal"]]
         latest_decisions = {r["decision_id"]: r for kind, r in selected if kind == "DecisionRecord"}
         accepted = [r for r in latest_decisions.values() if r["status"] == "Accepted"][-5:]
-        confirmed_tests = [
-            r for kind, r in selected if kind == "TestResult" and r["status"] == "Passed"
-        ][-5:]
+        latest_tests = {r["test_id"]: r for kind, r in selected if kind == "TestResult"}
+        confirmed_tests = [r for r in latest_tests.values() if r["status"] == "Passed"][-5:]
         if accepted:
             lines.append("Принятые решения (последние ревизии):")
             for r in accepted:
@@ -590,6 +595,8 @@ class MemoryService:
                     * direction
                     >= 0
                 ]
+        if operation in {"get_recent_activity", "get_daily_summary"}:
+            items = [r for r in items if not r["record_id"].startswith("failure:")]
         if operation == "get_daily_summary":
             as_of = dt.datetime.fromisoformat(snapshot["at"])
             start_time = (

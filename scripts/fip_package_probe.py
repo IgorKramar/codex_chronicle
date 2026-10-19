@@ -22,8 +22,9 @@ def main():
             return target / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 
         core = environment("core")
-        wheel = ROOT / "dist/codex_chronicle-0.2.0-py3-none-any.whl"
-        contracts = ROOT / "dist/fip_contracts-1.0.0-py3-none-any.whl"
+        wheel_dir = Path(os.environ.get("CHRONICLE_WHEEL_DIR", ROOT / "dist"))
+        wheel = wheel_dir / "codex_chronicle-0.2.0-py3-none-any.whl"
+        contracts = wheel_dir / "fip_contracts-1.0.0-py3-none-any.whl"
         subprocess.run(
             [str(core), "-m", "pip", "install", "--no-deps", str(wheel)],
             check=True,
@@ -78,9 +79,9 @@ assert schema()['$id']=='urn:fip:v1'
             "version": "0.2.0",
             "contract_version": "1.0.0",
         }
-        (ROOT / "evidence/fip-package-probe.json").write_text(
-            json.dumps(result, indent=2) + "\n", encoding="utf-8"
-        )
+        Path(
+            os.environ.get("CHRONICLE_PROBE_EVIDENCE", ROOT / "evidence/fip-package-probe.json")
+        ).write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(result))
 
 
