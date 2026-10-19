@@ -102,7 +102,10 @@ def main():
             return
         events = []
         for i in range(2):
-            events.extend(Store(directory / f"machine-{i}" / "events.db").events())
+            events.extend(
+                {k: v for k, v in e.items() if k not in {"global_sequence", "received_at"}}
+                for e in Store(directory / f"machine-{i}" / "events.db").events()
+            )
         projects = sorted({e["project_id"] for e in events})
         assert len(projects) == 2
         writer, reader = os.urandom(32).hex(), os.urandom(32).hex()
@@ -268,7 +271,12 @@ def main():
             assert publisher.call("GET", "/pages/" + page["id"])["id"] == page["id"]
             assert list(publisher.pages("/blocks/" + page["id"] + "/children"))
         publisher.publish()
-        assert pages == {p: app.state.store.get_meta("notion:page:project:" + p) for p in projects}
+        for project_id, page in pages.items():
+            assert page["id"] == app.state.store.get_meta("notion:page:project:" + project_id)["id"]
+            assert (
+                publisher.lookup(publisher.sources["Projects"], "project:" + project_id)["id"]
+                == page["id"]
+            )
         report["steps"]["notion_write_read_replay"] = pages
         report["steps"]["mcp_read"] = asyncio.run(read_mcp(url, reader, directory, pid))
         independent = FipClient(url, reader, directory / "reader.db", allow_loopback_http=True)
