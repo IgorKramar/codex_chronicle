@@ -10,6 +10,13 @@ def home() -> Path:
     return Path(os.environ.get("CHRONICLE_HOME", Path.home() / ".chronicle"))
 
 
+def default_project_policy(cfg):
+    policy = cfg.get("default_project_policy", "local")
+    if policy not in ("local", "export", "exclude"):
+        raise ValueError("default_project_policy must be local, export or exclude")
+    return policy
+
+
 def atomic_json(path: Path, value):
     path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     fd, tmp = tempfile.mkstemp(dir=path.parent, prefix=".tmp-")
@@ -36,11 +43,13 @@ def load(root=None):
     if not path.exists():
         raise RuntimeError("Сначала выполните chronicle init")
     cfg = json.loads(path.read_text(encoding="utf-8"))
+    default_project_policy(cfg)
     cfg["home"] = str(root)
     return cfg
 
 
 def save(cfg):
+    default_project_policy(cfg)
     root = Path(cfg["home"])
     path = root / "config.json"
     with ProcessLock(root / "config.lock"):
@@ -60,6 +69,7 @@ def initialize(root=None):
         "schema_version": 1,
         "computer_id": str(uuid.uuid4()),
         "mode": "Standard",
+        "default_project_policy": "local",
         "paused": False,
         "autostart": True,
         "collector_url": "",

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .agent import Agent
-from .config import home, initialize, load, save
+from .config import default_project_policy, home, initialize, load, save
 from .events import validate_event
 from .memory import record
 from .projects import discover
@@ -78,6 +78,11 @@ def parser():
     x = s.add_parser("config")
     x.add_argument("--collector-url")
     x.add_argument("--mode", choices=["Minimal", "Standard", "Verbose"])
+    x.add_argument(
+        "--default-project-policy",
+        choices=["local", "export", "exclude"],
+        help="Policy for newly discovered projects only; existing project policies are unchanged",
+    )
     x = s.add_parser("serve")
     x.add_argument("--host", default="127.0.0.1")
     x.add_argument("--port", type=int, default=8787)
@@ -116,7 +121,11 @@ def main(argv=None):
         if a.command == "init":
             cfg = initialize()
             output(
-                {"home": cfg["home"], "computer_id": cfg["computer_id"], "default_policy": "local"}
+                {
+                    "home": cfg["home"],
+                    "computer_id": cfg["computer_id"],
+                    "default_policy": default_project_policy(cfg),
+                }
             )
             return 0
         cfg = load()
@@ -287,6 +296,8 @@ def main(argv=None):
                 cfg["collector_url"] = a.collector_url
             if a.mode:
                 cfg["mode"] = a.mode
+            if a.default_project_policy:
+                cfg["default_project_policy"] = a.default_project_policy
             save(cfg)
             output({"saved": True})
         elif cmd == "notion":

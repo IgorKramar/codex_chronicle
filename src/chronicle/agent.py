@@ -38,6 +38,9 @@ class Agent:
                     discovered[cwd] = discover(cwd, self.cfg)
                 pid, root, worktree = discovered[cwd]
                 project = self.cfg["projects"][pid]
+                if project["policy"] == "exclude":
+                    path.unlink()
+                    continue
                 e.update(
                     project_id=pid,
                     project={"name": project["name"], "remote": project["remote"]},

@@ -48,6 +48,16 @@ Minimal пропускает tool/subagent events; сохраняет задач
 
 Проект default `local`. `export` разрешает отправку его накопленных безопасных событий (включая прошлые записи). `exclude` запрещает новые записи; существующее удаляется отдельно через purge. Не ставьте export рабочим/чужим репозиториям без соответствующего разрешения. Можно держать разные CHRONICLE_HOME/worker для разных trust boundaries.
 
+Для явно разрешённой области можно изменить политику **новых** автоматически обнаруженных проектов:
+
+```bash
+chronicle config --default-project-policy export
+# Вернуть безопасное значение для будущих проектов:
+chronicle config --default-project-policy local
+```
+
+Настройка `default_project_policy` принимает `local`, `export` или `exclude`. В новой установке и старых конфигурациях без этого поля действует `local`. Уже зарегистрированные проекты сохраняют свою политику, в том числе при повторном обнаружении или привязке другого worktree: меняйте их явно через `projects --project ... --policy ...`. Выбор `export` для будущих проектов требует разрешения на всю соответствующую область; он не включает полные промпты, исходники или стенограммы и не настраивает Collector/Notion. `chronicle init` показывает фактически действующее значение, не сбрасывая конфигурацию.
+
 ```bash
 chronicle projects --discover /new/directory
 chronicle projects --project EXISTING_ID --bind /moved/directory

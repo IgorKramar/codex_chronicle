@@ -4,7 +4,7 @@ import uuid
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .config import save
+from .config import default_project_policy, save
 from .privacy import redact, safe_path
 
 
@@ -41,6 +41,7 @@ def canonical_remote(remote):
 
 
 def discover(cwd, cfg):
+    policy = default_project_policy(cfg)
     root = Path(git(cwd, "rev-parse", "--show-toplevel") or cwd).resolve()
     remote = canonical_remote(git(root, "remote", "get-url", "origin"))
     pid = cfg["bindings"].get(str(root))
@@ -51,7 +52,7 @@ def discover(cwd, cfg):
             else str(uuid.uuid4())
         )
         cfg["bindings"][str(root)] = pid
-    cfg["projects"].setdefault(pid, {"name": root.name, "remote": remote, "policy": "local"})
+    cfg["projects"].setdefault(pid, {"name": root.name, "remote": remote, "policy": policy})
     save(cfg)
     worktree = str(uuid.uuid5(uuid.NAMESPACE_URL, cfg["computer_id"] + ":" + str(root)))
     return pid, root, worktree
