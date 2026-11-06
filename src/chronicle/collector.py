@@ -69,8 +69,16 @@ def create_app(location=None, grants=None, publisher_cfg=None):
                         if row["kind"] == "ProjectContext":
                             project["name"] = r["name"]
                     await asyncio.to_thread(publish_store, store, cfg)
+                    store.set_meta("publisher_error", None)
                 except Exception as exc:
-                    store.set_meta("publisher_error", {"code": type(exc).__name__, "at": now()})
+                    store.set_meta(
+                        "publisher_error",
+                        {
+                            "code": type(exc).__name__,
+                            "status": getattr(exc, "status", None),
+                            "at": now(),
+                        },
+                    )
                 try:
                     await asyncio.wait_for(
                         stop.wait(), timeout=publisher_cfg.get("publish_seconds", 600)
@@ -214,6 +222,17 @@ def create_app(location=None, grants=None, publisher_cfg=None):
                 "last_session": session_key(e),
             }
         return list(latest.values())
+
+    @app.get("/v1/publisher/status", tags=["diagnostics"])
+    def publisher_status(grant=Depends(reader)):
+        # Publisher state is global; a project-scoped reader must not see it.
+        if "*" not in grant.get("projects", []):
+            raise HTTPException(403, "All-project read scope required")
+        return {
+            "configured": bool(publisher_cfg),
+            "last_publish": store.get_meta("notion:last_publish", None),
+            "last_error": store.get_meta("publisher_error", None),
+        }
 
     @app.get("/v1/metrics", tags=["diagnostics"])
     def metrics(grant=Depends(reader)):

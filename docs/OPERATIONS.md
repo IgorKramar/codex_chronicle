@@ -150,3 +150,7 @@ Backups: согласованный `pg_dump -Fc` + publisher metadata volume. �
 ## FIP v1 / MCP extension (0.2.0)
 
 Новые REST/MCP интерфейсы, права и offline delivery описаны в API.md и INTEGRATION.md. Schema changes в старом event store не нужны; дополнительные fip_records/fip_operations создаются автоматически при запуске API. Backup включает обе таблицы. FIP ledger не очищается legacy retention/purge CLI. Pending external-client outbox резервируется отдельно на машине producer. MCP подключается явно и по умолчанию read-only; CHRONICLE_MCP_WRITE_ENABLED=0 также запрещает background flush. Notion для новой FIP памяти требует отдельного CHRONICLE_NOTION_PROJECTS allowlist.
+
+### Publisher status
+
+`GET /v1/publisher/status` requires authenticated `read` scope and `projects: ["*"]`, because publication is global. It reports configured state, last successful publication time/project count, and the last sanitized exception class/HTTP status/time. It does not return credentials, Notion content, raw error bodies or private project IDs. A successful pass clears the last error. Healthz alone proves only Collector liveness.
